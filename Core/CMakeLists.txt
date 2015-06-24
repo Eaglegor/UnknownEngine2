@@ -1,5 +1,7 @@
 add_subdirectory(Engine)
 add_subdirectory(Entities)
+add_subdirectory(Input)
+add_subdirectory(Math)
 add_subdirectory(Messages)
 add_subdirectory(OSAbstraction)
 add_subdirectory(Plugins)
