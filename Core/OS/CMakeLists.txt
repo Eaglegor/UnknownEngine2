@@ -1,13 +1,15 @@
-set(PUBLIC_INCLUDES
-	DLLUtils.h
-)
-	
+include(UnknownEngineModuleUtils)
+
+set_module_name(OS)
+set_module_type(SHARED_LIB)
+
+add_public_include(DLLUtils.h)
+
 if(WIN32)
-	set(COMPILATION_SCOPE
-		DLLUtils.windows.cpp
-	)
+	add_source_file(DLLUtils.window.cpp)
 elseif(UNIX)
-	set(COMPILATION_SCOPE
-		DLLUtils.unix.cpp
-	)
+	add_source_file(DLLUtils.unix.cpp)
 endif()
+
+generate_target()
+setup_installation()

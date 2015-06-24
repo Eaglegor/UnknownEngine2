@@ -1,2 +1,3 @@
-
 add_subdirectory(FindModules)
+add_subdirectory(CompilerFlags)
+add_subdirectory(ThirdPartyDependencies)

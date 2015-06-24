@@ -1,8 +1,7 @@
-set(PUBLIC_INCLUDES
-	ILogRecord.h
-	ILogStream.h
-)
-	
-set(COMPILATION_SCOPE
+include(UnknownEngineModuleUtils)
 
-)
+set_module_name(Logging)
+set_module_type(SHARED_LIB)
+
+#generate_target()
+#setup_installation()

@@ -1,7 +1,7 @@
-set(PUBLIC_INCLUDES
+include(UnknownEngineModuleUtils)
 
-)
-	
-set(COMPILATION_SCOPE
+set_module_name(Entities)
+set_module_type(SHARED_LIB)
 
-)
+#generate_target()
+#setup_installation()

@@ -1,7 +1,7 @@
-set(PUBLIC_INCLUDES
-Synchronizable.h
-)
-	
-set(COMPILATION_SCOPE
+include(UnknownEngineModuleUtils)
 
-)
+set_module_name(Engine)
+set_module_type(SHARED_LIB)
+
+#generate_target()
+#setup_installation()

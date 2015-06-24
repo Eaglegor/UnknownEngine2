@@ -1,13 +1,12 @@
 #pragma once
 
+#include "RAIIFunctionProfiler.h"
 #include "FunctionSignatureMacros.h"
 
-#if UNKNOWNENGINE_ENABLE_PROFILING
-	#define PROFILE_FUNCTION_START() Core::Profiling::ProfileManager::getSingleton()->getProfileInstance()->startFunction(UNKNOWN_ENGINE_PRETTY_FUNCTION)
-	#define PROFILE_FUNCTION_CHECKPOINT(name) Core::Profiling::ProfileManager::getSingleton()->getProfileInstance()->checkPoint(#name)
-	#define PROFILE_FUNCTION_END() Core::Profiling::ProfileManager::getSingleton()->getProfileInstance()->endFunction(UNKNOWN_ENGINE_PRETTY_FUNCTION)
+#if UNKNOWN_ENGINE_ENABLE_PROFILING
+	#define PROFILE_FUNCTION() UnknownEngine::Core::Profiling::RAIIFunctionProfiler __function_profiler__(UNKNOWN_ENGINE_PRETTY_FUNCTION)
+	#define PROFILE_CHECKPOINT(name) Core::Profiling::ProfileManager::getSingleton()->getProfileInstance()->checkPoint(#name)
 #else
-	#define PROFILE_FUNCTION_START()
-	#define PROFILE_FUNCTION_CHECKPOINT(, name)
-	#define PROFILE_FUNCTION_END()
+	#define PROFILE_FUNCTION()
+	#define PROFILE_CHECKPOINT(name)
 #endif
