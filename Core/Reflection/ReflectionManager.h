@@ -12,8 +12,14 @@ namespace UnknownEngine
 			{
 				public:
 					virtual ~ReflectionManager(){}
-					virtual ITypeMetaInfo* getMetaInformation(const char* type_name) = 0;
-					virtual registerType(const char* type_name, ITypeMetaInfo* meta_info) = 0;
+					virtual ITypeMetaInfo* getMetaInformation(const char* type_name);
+
+					template<typename T>
+					virtual ITypeMetaInfo* registerType<T>(const char* type_name)
+					{
+						// Register types
+						return nullptr;
+					}
 			};
 		}
 	}

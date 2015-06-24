@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/Reflection/Reflectable.h>
+
 namespace UnknownEngine
 {
 	namespace Core
@@ -12,12 +14,8 @@ namespace UnknownEngine
 
 		namespace Serialization
 		{
-			class Serializable
+			class Serializable : public Reflection::Reflectable
 			{
-				public:
-					virtual ~Serializable(){}
-					virtual Reflection::IPropertiesMap* getProperties() = 0;
-					virtual Reflection::ITypeMetaInfo* getTypeMetaInfo() = 0;
 			};
 		}
 	}

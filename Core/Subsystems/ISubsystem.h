@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Synchronizable.h>
+#include <Core/State/Synchronizable.h>
 
 namespace UnknownEngine
 {
@@ -13,7 +13,7 @@ namespace UnknownEngine
 
 		namespace Subsystems
 		{
-			class ISubsystem : public Synchronizable
+			class ISubsystem : public State::Synchronizable
 			{
 				public:
 					virtual ~ISubsystem(){}
