@@ -12,10 +12,10 @@ namespace UnknownEngine
 			{
 				public:
 					virtual ~ReflectionManager(){}
-					virtual ITypeMetaInfo* getMetaInformation(const char* type_name);
+					ITypeMetaInfo* getMetaInformation(const char* type_name);
 
 					template<typename T>
-					virtual ITypeMetaInfo* registerType<T>(const char* type_name)
+					ITypeMetaInfo* registerType(const char* type_name)
 					{
 						// Register types
 						return nullptr;
