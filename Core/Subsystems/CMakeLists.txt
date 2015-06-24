@@ -1,0 +1,7 @@
+set(PUBLIC_INCLUDES
+ISubsystem.h
+)
+	
+set(COMPILATION_SCOPE
+
+)

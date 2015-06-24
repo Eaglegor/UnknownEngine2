@@ -1,0 +1,7 @@
+set(PUBLIC_INCLUDES
+
+)
+	
+set(COMPILATION_SCOPE
+
+)

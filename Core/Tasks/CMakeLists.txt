@@ -1,0 +1,7 @@
+set(PUBLIC_INCLUDES
+ITask.h
+)
+	
+set(COMPILATION_SCOPE
+
+)
