@@ -1,3 +1,4 @@
+add_subdirectory(AssetLoaders)
 add_subdirectory(Graphics)
 add_subdirectory(Physics)
 add_subdirectory(Script)

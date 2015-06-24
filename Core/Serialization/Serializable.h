@@ -7,6 +7,7 @@ namespace UnknownEngine
 		namespace Reflection
 		{
 			class IPropertiesMap;
+			class ITypeMetaInfo;
 		}
 
 		namespace Serialization
@@ -16,6 +17,7 @@ namespace UnknownEngine
 				public:
 					virtual ~Serializable(){}
 					virtual Reflection::IPropertiesMap* getProperties() = 0;
+					virtual Reflection::ITypeMetaInfo* getTypeMetaInfo() = 0;
 			};
 		}
 	}
