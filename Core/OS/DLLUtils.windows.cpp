@@ -22,7 +22,7 @@ namespace UnknownEngine
 
 			bool DLLUtils::unloadLibrary(void* library_handle)
 			{
-				return FreeLibrary(reinterpret_cast<HINSTANCE>(library_handle));
+				return FreeLibrary(reinterpret_cast<HINSTANCE>(library_handle)) != 0;
 			}
 
 			const char* DLLUtils::getLastLoadError()

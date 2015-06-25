@@ -8,19 +8,12 @@ namespace UnknownEngine
 	{
 		namespace OS
 		{
-			class DLLUtils
+			class OS_EXPORT DLLUtils
 			{
 				public:
-					OS_EXPORT
 					static void* loadLibrary(const char* filename);
-					
-					OS_EXPORT
 					static void* getFunctionAddress(void* library_handle, const char* name);
-					
-					OS_EXPORT
 					static bool unloadLibrary(void* library_handle);
-					
-					OS_EXPORT
 					static const char* getLastLoadError();
 			};
 		}

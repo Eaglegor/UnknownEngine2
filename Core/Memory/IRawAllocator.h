@@ -1,12 +1,14 @@
 #pragma once
 
+#include <Memory_export.h>
+
 namespace UnknownEngine
 {
 	namespace Core
 	{
 		namespace Memory
 		{
-			class IRawAllocator
+			class MEMORY_EXPORT IRawAllocator
 			{
 				public:
 					virtual ~IRawAllocator(){}

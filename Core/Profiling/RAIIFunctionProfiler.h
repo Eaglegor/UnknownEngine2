@@ -8,13 +8,11 @@ namespace UnknownEngine
 	{
 		namespace Profiling
 		{
-			class RAIIFunctionProfiler
+			class PROFILING_EXPORT RAIIFunctionProfiler
 			{
 			public:
-				PROFILING_EXPORT
-				RAIIFunctionProfiler(const char* name);
 				
-				PROFILING_EXPORT
+				RAIIFunctionProfiler(const char* name);
 				~RAIIFunctionProfiler();
 			};
 		}

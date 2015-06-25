@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_set>
 #include <Utils/Common/Singleton.h>
+#include "PluginVersion.h"
 
 #include <Plugins_export.h>
 
@@ -16,26 +17,19 @@ namespace UnknownEngine
 		{
 			class IPlugin;
 			
-			class PluginsManager : public Utils::Common::Singleton<PluginsManager>
+			class PLUGINS_EXPORT PluginsManager : public Utils::Common::Singleton<PluginsManager>
 			{
 			public:
-				PLUGINS_EXPORT
+				
 				virtual ~PluginsManager(){}
 				
-				PLUGINS_EXPORT
 				bool pluginIsLoaded(const char* name) const;
-				
-				PLUGINS_EXPORT
 				bool loadPlugin(const char* filename);
-				
-				PLUGINS_EXPORT
 				bool unloadPlugin(const char* name, bool cascade);
-				
-				PLUGINS_EXPORT
 				bool unloadAll();
-				
-				PLUGINS_EXPORT
 				void addDependency(IPlugin* main, IPlugin* dependent);
+
+				version_t getPluginVersion(const char* name);
 				
 			private:
 				struct LoadedPlugin
@@ -49,19 +43,4 @@ namespace UnknownEngine
 			};
 		}
 	}
-	
-	namespace Utils
-	{
-		namespace Common
-		{
-#ifdef _MSC_VER
-			#ifndef Plugins_EXPORTS
-			extern template class PLUGINS_EXPORT Singleton<Core::Plugins::PluginsManager>;
-			#else
-			template class PLUGINS_EXPORT Singleton<Core::Plugins::PluginsManager>;
-			#endif
-#endif
-		}
-	}
-	
 }

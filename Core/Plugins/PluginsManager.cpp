@@ -7,14 +7,8 @@
 namespace UnknownEngine
 {
 	
-	namespace Utils
-	{
-		namespace Common
-		{
-			template<>
-			Core::Plugins::PluginsManager* Singleton<Core::Plugins::PluginsManager>::instance = nullptr;
-		}
-	}
+	template<>
+	Core::Plugins::PluginsManager* Utils::Common::Singleton<Core::Plugins::PluginsManager>::instance = nullptr;
 	
 	namespace Core
 	{
@@ -57,6 +51,8 @@ namespace UnknownEngine
 				loaded_plugin.plugin_instance = plugin;
 				loaded_plugin.library_handle = library_handle;
 				
+				plugin->postLoad();
+
 				plugins.emplace(plugin->getName(), loaded_plugin);
 				
 				return true;
@@ -112,6 +108,8 @@ namespace UnknownEngine
 				IPlugin* plugin = main_iter->second.plugin_instance;
 				void* library_handle = main_iter->second.library_handle;
 				
+				plugin->preUnload();
+
 				DestroyPluginInstanceFunc destroy_function = reinterpret_cast<DestroyPluginInstanceFunc>(OS::DLLUtils::getFunctionAddress(library_handle, "destroyInstance"));
 				destroy_function(plugin);
 				bool success = OS::DLLUtils::unloadLibrary(library_handle);
@@ -130,6 +128,17 @@ namespace UnknownEngine
 					return;
 				}
 				main_iter->second.dependent_plugins.emplace(dependent);
+			}
+
+			version_t PluginsManager::getPluginVersion(const char* name)
+			{
+				auto iter = plugins.find(name);
+				if (iter == plugins.end())
+				{
+					//[ERROR]
+					return 0;
+				}
+				return iter->second.plugin_instance->getVersion();
 			}
 		}
 	}

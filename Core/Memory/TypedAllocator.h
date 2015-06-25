@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <Memory_export.h>
 #include "IRawAllocator.h"
 
 namespace UnknownEngine
@@ -9,6 +10,7 @@ namespace UnknownEngine
 	{
 		namespace Memory
 		{
+
 			template<typename T>
 			class TypedAllocator
 			{

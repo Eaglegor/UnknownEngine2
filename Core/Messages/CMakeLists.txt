@@ -6,7 +6,7 @@ set_module_type(INCLUDES_ONLY)
 add_public_include(IMessage.h)
 add_public_include(IMessageQueue.h)
 add_public_include(IMessageTypeMetaInfo.h)
-add_public_include(MessageTypeInfo.h)
+add_public_include(MessageTypeMetaInfo.h)
 
 generate_target()
 setup_installation()

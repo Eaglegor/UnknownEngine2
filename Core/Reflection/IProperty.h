@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Reflection_export.h>
+
 namespace UnknownEngine
 {
 	namespace Core
@@ -8,7 +10,7 @@ namespace UnknownEngine
 		{
 			class IPropertyTypeMetaInfo;
 
-			class IProperty
+			class REFLECTION_EXPORT IProperty
 			{
 				public:
 					virtual ~IProperty(){}

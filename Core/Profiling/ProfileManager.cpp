@@ -4,14 +4,8 @@
 
 namespace UnknownEngine
 {
-	namespace Utils
-	{
-		namespace Common
-		{
-			template<>
-			Core::Profiling::ProfileManager* Singleton<Core::Profiling::ProfileManager>::instance = nullptr;
-		}
-	}
+	template<>
+	Core::Profiling::ProfileManager* Utils::Common::Singleton<Core::Profiling::ProfileManager>::instance = nullptr;
 	
 	namespace Core
 	{
@@ -19,10 +13,11 @@ namespace UnknownEngine
 		{
 			IProfilerInstance* ProfileManager::getProfilerInstance()
 			{
-				auto iter = profiler_instances.find(std::this_thread::get_id());
+				std::thread::id thread_id = std::this_thread::get_id();
+				auto iter = profiler_instances.find(thread_id);
 				if(iter == profiler_instances.end())
 				{
-					iter = profiler_instances.emplace(std::this_thread::get_id(), std::make_shared<StubProfilerInstance>()).first;
+					iter = profiler_instances.emplace(thread_id, std::make_shared<StubProfilerInstance>()).first;
 				}
 				return iter->second.get();
 			}

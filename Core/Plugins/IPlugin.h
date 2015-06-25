@@ -1,14 +1,16 @@
 #pragma once
 
+#include "PluginVersion.h"
+#include <Plugins_export.h>
+
 namespace UnknownEngine
 {
 	namespace Core
 	{
 		namespace Plugins
 		{
-			typedef size_t version_t;
-			
-			class IPlugin
+	
+			class PLUGINS_EXPORT IPlugin
 			{
 			public:
 				virtual ~IPlugin(){}

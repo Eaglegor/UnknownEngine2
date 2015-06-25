@@ -35,7 +35,7 @@ namespace UnknownEngine
 
 					virtual ~Singleton() {}
 
-					explicit Singleton ( const Singleton& rhs );
+					explicit Singleton ( const Singleton& rhs ) = delete;
 
 					static T* instance;
 			};
