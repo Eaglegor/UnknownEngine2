@@ -2,11 +2,11 @@
 
 #ifdef _MSC_VER
 	#define UNKNOWN_ENGINE_PRETTY_FUNCTION __FUNCSIG__
-#elseif __GNUC__
+#elif __GNUC__
 	#define UNKNOWN_ENGINE_PRETTY_FUNCTION __PRETTY_FUNCTION__
-#elseif __MINGW32__
+#elif __MINGW32__
 	#define UNKNOWN_ENGINE_PRETTY_FUNCTION __PRETTY_FUNCTION__
-#elseif __clang__
+#elif __clang__
 	#define UNKNOWN_ENGINE_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #else
 	#define UNKNOWN_ENGINE_PRETTY_FUNCTION __func__

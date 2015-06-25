@@ -17,9 +17,9 @@ endmacro()
 macro(setup_precompiled_header include_file source_file)
 	include(PCHSupport)
 
-	if(COMPILER_SUPPORTS_PCH)
-		add_precompiled_header(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${include_file} ${CMAKE_CURRENT_SOURCE_DIR}/${source_file})
-	endif(COMPILER_SUPPORTS_PCH)
+	#if(COMPILER_SUPPORTS_PCH)
+	#	add_precompiled_header(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${include_file} ${CMAKE_CURRENT_SOURCE_DIR}/${source_file})
+	#endif(COMPILER_SUPPORTS_PCH)
 endmacro()
 
 macro(add_source_file filename)
@@ -62,7 +62,7 @@ endmacro()
 
 macro(get_stripped_directory full_filename destination_var)
 	string(REPLACE ${UNKNOWN_ENGINE_SOURCE_DIR}/ "" STRIPPED_FIRST ${CMAKE_CURRENT_SOURCE_DIR})
-	string(REGEX REPLACE "(.*)/.*\.h" "\\1" ${destination_var} ${STRIPPED_FIRST})
+	string(REGEX REPLACE "(.*)/.*\\.h" "\\1" ${destination_var} ${STRIPPED_FIRST})
 endmacro()
 
 macro(setup_installation)

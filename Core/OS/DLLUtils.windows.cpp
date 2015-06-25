@@ -1,5 +1,6 @@
 #include "DLLUtils.h"
 #include <windows.h>
+#include <string>
 
 namespace UnknownEngine
 {
@@ -7,24 +8,27 @@ namespace UnknownEngine
 	{
 		namespace OS
 		{
-			static void* DLLUtils::loadLibrary(const char* filename)
+			static std::string lastError;
+
+			void* DLLUtils::loadLibrary(const char* filename)
 			{
 				return LoadLibrary(filename);
 			}
 
-			static void* DLLUtils::getFunctionAddress(void* library_handle, const char* name)
+			void* DLLUtils::getFunctionAddress(void* library_handle, const char* name)
 			{
-				return GetProcAddress(reinterpret_cast<HMODULE>(library_handle), name);
+				return reinterpret_cast<void*>(GetProcAddress(reinterpret_cast<HINSTANCE>(library_handle), name));
 			}
 
-			static bool DLLUtils::unloadLibrary(void* library_handle)
+			bool DLLUtils::unloadLibrary(void* library_handle)
 			{
-				return FreeLibrary(reinterpret_cast<HMODULE>(library_handle));
+				return FreeLibrary(reinterpret_cast<HINSTANCE>(library_handle));
 			}
 
-			static const char* DLLUtils::getLastLoadError()
+			const char* DLLUtils::getLastLoadError()
 			{
-				return GetLastError();
+				lastError = "Error code: " + std::to_string(GetLastError());
+				return lastError.c_str();
 			}
 		}
 	}
