@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "PluginsManager.h"
 #include "IPlugin.h"
 #include <Core/OS/DLLUtils.h>

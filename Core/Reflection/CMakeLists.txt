@@ -12,3 +12,4 @@ add_source_file(ReflectionManager.cpp)
 
 generate_target()
 setup_installation()
+set_folder_name(Core)

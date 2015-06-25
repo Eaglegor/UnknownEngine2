@@ -14,5 +14,7 @@ add_source_file(RAIIFunctionProfiler.cpp)
 
 generate_target()
 setup_installation()
+set_folder_name(Core)
 
-setup_precompiled_header(stdafx.h stdafx.cpp)
+set_pch_include(stdafx.h)
+enable_build_speedup()

@@ -7,3 +7,7 @@ add_public_include(Singleton.h)
 
 generate_target()
 setup_installation()
+
+set_project_label(Common)
+
+set_folder_name(Utils)

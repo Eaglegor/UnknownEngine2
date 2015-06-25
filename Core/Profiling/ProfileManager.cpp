@@ -1,5 +1,4 @@
-#include "stdafx.h"
-
+#include <memory>
 #include "ProfileManager.h"
 #include "IProfilerInstance.h"
 

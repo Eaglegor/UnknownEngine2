@@ -18,6 +18,8 @@ include(CompilerFlags/${CMAKE_CXX_COMPILER_ID})
 
 include_directories(${UNKNOWN_ENGINE_SOURCE_DIR})
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 add_subdirectory(Core)
 add_subdirectory(Plugins)
 add_subdirectory(Utils)

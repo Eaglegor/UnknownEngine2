@@ -14,11 +14,13 @@ macro(MSVC_generate_filters)
 		file(RELATIVE_PATH SRCGR ${CMAKE_CURRENT_SOURCE_DIR} ${f})
 
 		# Extract the folder, ie remove the filename part
-		string(REGEX REPLACE "(.*)(/[^/]*)$" "\\1" SRCGR ${SRCGR})
+		get_filename_component(SRCGR ${SRCGR} DIRECTORY)
 
-		# Source_group expects \\ (double antislash), not / (slash)
-		string(REPLACE / \\ SRCGR ${SRCGR})
-		source_group("${SRCGR}" FILES ${f})
+		if(NOT SRCGR STREQUAL "")
+			# Source_group expects \\ (double antislash), not / (slash)
+			string(REPLACE / \\ SRCGR ${SRCGR})
+			source_group("${SRCGR}" FILES ${f})
+		endif()
 	endforeach()
 
 endmacro(MSVC_generate_filters)

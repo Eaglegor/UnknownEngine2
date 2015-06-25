@@ -10,8 +10,10 @@ add_source_file(PluginsManager.cpp)
 
 generate_target()
 setup_installation()
-
-setup_precompiled_header(stdafx.h stdafx.cpp)
+set_folder_name(Core)
 
 add_module_link_library(OS)
 add_module_link_library(Profiling)
+
+set_pch_include(stdafx.h)
+enable_build_speedup()

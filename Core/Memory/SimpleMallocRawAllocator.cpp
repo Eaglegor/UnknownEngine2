@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdlib.h>
 #include "SimpleMallocRawAllocator.h"
 
 namespace UnknownEngine

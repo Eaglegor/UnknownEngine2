@@ -13,3 +13,4 @@ endif()
 
 generate_target()
 setup_installation()
+set_folder_name(Core)

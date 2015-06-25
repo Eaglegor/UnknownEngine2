@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "RAIIFunctionProfiler.h"
 #include "IProfilerInstance.h"
 #include "ProfileManager.h"
