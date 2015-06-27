@@ -1,6 +1,6 @@
 include(UnknownEngineModuleUtils)
 
-set_module_name(Entities)
+set_module_name(Scene)
 set_module_type(INCLUDES_ONLY)
 
 generate_target()

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include "IRawAllocator.h"
 
 namespace UnknownEngine
@@ -11,7 +12,7 @@ namespace UnknownEngine
 			class SimpleMallocRawAllocator : public IRawAllocator
 			{
 				public:
-					virtual void* allocateMemory(size_t amount);
+					virtual void* allocateMemory(std::size_t amount);
 					virtual void deallocateMemory(void* p);
 			};
 		}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <Memory_export.h>
 
 namespace UnknownEngine
@@ -13,7 +14,7 @@ namespace UnknownEngine
 				public:
 					virtual ~IRawAllocator(){}
 
-					virtual void* allocateMemory(size_t amount) = 0;
+					virtual void* allocateMemory(std::size_t amount) = 0;
 					virtual void deallocateMemory(void* p) = 0;
 			};
 		}

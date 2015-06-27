@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cstdint>
+
 namespace UnknownEngine
 {
 	namespace Core
 	{
 		namespace Plugins
 		{
-			typedef size_t version_t;
+			typedef std::size_t version_t;
 		}
 	}
 }

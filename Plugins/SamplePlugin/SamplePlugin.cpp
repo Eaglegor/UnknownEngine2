@@ -1,6 +1,7 @@
 #include <Core/Plugins/IPlugin.h>
 #include <Core/Plugins/PluginsManager.h>
 #include <iostream>
+#include <SamplePlugin_export.h>
 
 using namespace UnknownEngine::Core::Plugins;
 
@@ -38,13 +39,13 @@ namespace UnknownEngine
 	}
 }
 
-extern "C" _declspec(dllexport)
+extern "C" SAMPLEPLUGIN_EXPORT
 IPlugin* createInstance()
 {
 	return new UnknownEngine::Plugins::SamplePlugin::SamplePlugin();
 }
 
-extern "C" _declspec(dllexport)
+extern "C" SAMPLEPLUGIN_EXPORT
 void destroyInstance(IPlugin* plugin)
 {
 	delete plugin;

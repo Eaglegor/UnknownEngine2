@@ -1,5 +1,5 @@
 add_subdirectory(Engine)
-add_subdirectory(Entities)
+add_subdirectory(Scene)
 add_subdirectory(Input)
 add_subdirectory(Logging)
 add_subdirectory(Math)

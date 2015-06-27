@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <cstdlib>
 #include "SimpleMallocRawAllocator.h"
 
 namespace UnknownEngine
@@ -8,14 +8,14 @@ namespace UnknownEngine
 		namespace Memory
 		{
 
-			void *SimpleMallocRawAllocator::allocateMemory(size_t amount)
+			void *SimpleMallocRawAllocator::allocateMemory(std::size_t amount)
 			{
-				return malloc(amount);
+				return ::malloc(amount);
 			}
 
 			void SimpleMallocRawAllocator::deallocateMemory(void *p)
 			{
-				free(p);
+				::free(p);
 			}
 
 		}
