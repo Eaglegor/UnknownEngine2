@@ -13,7 +13,6 @@ add_private_include(SimpleMallocRawAllocator.h)
 
 add_source_file(SimpleMallocRawAllocator.cpp)
 add_source_file(MemoryManager.cpp)
-add_source_file(New.cpp)
 
 generate_target()
 setup_installation()

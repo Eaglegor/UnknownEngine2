@@ -10,12 +10,12 @@ namespace UnknownEngine
 		{
 			RAIIFunctionProfiler::RAIIFunctionProfiler ( const char* name )
 			{
-				Core::Profiling::ProfileManager::getSingleton()->getProfilerInstance()->startFunction(name);
+				Core::Profiling::ProfileManager::getSingleton()->getProfilerInstance()->onFunctionStarted(name);
 			}
 
 			RAIIFunctionProfiler::~RAIIFunctionProfiler()
 			{
-				Core::Profiling::ProfileManager::getSingleton()->getProfilerInstance()->endFunction();
+				Core::Profiling::ProfileManager::getSingleton()->getProfilerInstance()->onFunctionEnded();
 			}
 		}
 	}

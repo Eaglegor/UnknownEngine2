@@ -1,4 +1,5 @@
 #include "MemoryManager.h"
+#include "New.h"
 
 namespace UnknownEngine
 {

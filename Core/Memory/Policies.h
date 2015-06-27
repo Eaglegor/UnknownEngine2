@@ -6,7 +6,10 @@ namespace UnknownEngine
 	{
 		namespace Memory
 		{
-			
+			enum class AllocationPolicy
+			{
+				GENERIC
+			};
 		}
 	}
 }
