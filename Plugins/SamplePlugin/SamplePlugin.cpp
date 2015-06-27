@@ -1,5 +1,6 @@
 #include <Core/Plugins/IPlugin.h>
 #include <Core/Plugins/PluginsManager.h>
+#include <Core/Subsystems/ISubsystem.h>
 #include <iostream>
 #include <SamplePlugin_export.h>
 
@@ -22,6 +23,11 @@ namespace UnknownEngine
 				virtual void preUnload()
 				{
 					std::cout << "Pre unload called" << std::endl;
+				}
+
+				virtual Core::Subsystems::ISubsystem* getSubsystem(const char* name)
+				{
+					return nullptr;
 				}
 
 				virtual const char* getName() const

@@ -7,6 +7,11 @@ namespace UnknownEngine
 {
 	namespace Core
 	{
+		namespace Subsystems
+		{
+			class ISubsystem;
+		}
+
 		namespace Plugins
 		{
 	
@@ -18,6 +23,8 @@ namespace UnknownEngine
 				virtual void postLoad() = 0;
 				virtual void preUnload() = 0;
 				
+				virtual Subsystems::ISubsystem* getSubsystem(const char* name) = 0;
+
 				virtual const char* getName() const = 0;
 				virtual version_t getVersion() const = 0;
 			};

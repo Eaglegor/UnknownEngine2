@@ -25,6 +25,7 @@ namespace UnknownEngine
 				
 				bool pluginIsLoaded(const char* name) const;
 				bool loadPlugin(const char* filename);
+				IPlugin* getPlugin(const char* name) const;
 				bool unloadPlugin(const char* name, bool cascade);
 				bool unloadAll();
 				void addDependency(IPlugin* main, IPlugin* dependent);

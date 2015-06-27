@@ -140,6 +140,16 @@ namespace UnknownEngine
 				}
 				return iter->second.plugin_instance->getVersion();
 			}
+
+			IPlugin* PluginsManager::getPlugin(const char* name) const
+			{
+				auto iter = plugins.find(name);
+				if (iter == plugins.end()) {
+					//[ERROR]
+					return nullptr;
+				}
+				return iter->second.plugin_instance;
+			}
 		}
 	}
 }
