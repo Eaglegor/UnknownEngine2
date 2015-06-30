@@ -27,3 +27,5 @@ add_subdirectory(Assets)
 add_subdirectory(SceneLoaders)
 add_subdirectory(Test)
 add_subdirectory(CMakeModules)
+
+add_subdirectory(Prototypes)
