@@ -2,6 +2,7 @@ class IProperty
 {
 	public:
 		virtual ITypeMetaInfo* getType() = 0;
+		virtual void setValue(IProperty* rhs) = 0;
 		virtual ~IProperty(){}
 };
 
