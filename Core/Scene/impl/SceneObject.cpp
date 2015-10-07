@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneObject.h"
+#include "../IComponent.h"
 
 namespace UnknownEngine
 {
@@ -7,30 +8,35 @@ namespace UnknownEngine
 	{
 		namespace Scene
 		{
-			virtual const RawString &guid SceneObject::getName() const
+			SceneObject::SceneObject(const RawString & name):
+			name(name)
+			{
+			}
+
+			const RawString SceneObject::getName() const
 			{
 				return name.c_str();
 			}
 			
-			virtual IComponent* SceneObject::getComponent(const RawString &name) const
+			IComponent* SceneObject::getComponent(const RawString &name) const
 			{
-				auto iter = components->find(name);
+				auto iter = components.find(name);
 				if(iter == components.end()) return nullptr;
 				
 				return iter->second;
 			}
 
-			virtual void SceneObject::addComponent(IComponent* component)
+			void SceneObject::addComponent(IComponent* component)
 			{
 				components.emplace(component->getName(), component);
 			}
 
-			virtual void SceneObject::removeComponent(const RawString &name)
+			void SceneObject::removeComponent(const RawString &name)
 			{
 				components.erase(name);
 			}
 			
-			virtual void SceneObject::removeComponent(IComponent* component)
+			void SceneObject::removeComponent(IComponent* component)
 			{
 				removeComponent(component->getName());
 			}

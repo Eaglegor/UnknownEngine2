@@ -5,6 +5,8 @@ set_module_type(SHARED_LIB)
 
 add_public_include(ISubsystem.h)
 add_public_include(SubsystemsManager.h)
+add_public_include(ISubsystemFactory.h)
+add_public_include(SubsystemDesc.h)
 
 add_source_file(SubsystemsManager.cpp)
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <Core/Reflection/IMetaType.h>
 
 namespace UnknownEngine
 {
@@ -8,7 +8,11 @@ namespace UnknownEngine
 	{
 		namespace Scene
 		{
-			typedef std::string ComponentType;
+			using Reflection::IMetaType;
+
+			class IComponentType : public IMetaType
+			{
+			};
 		}
 	}
 }

@@ -6,11 +6,13 @@ namespace UnknownEngine
 	{
 		namespace Messages
 		{
+			class IMessageType;
+
 			class IMessage
 			{
 				public:
 					virtual ~IMessage(){}
-					virtual IMessageTypeMetaInfo* getTypeInfo();
+					virtual IMessageType* getType() = 0;
 			};
 		}
 	}

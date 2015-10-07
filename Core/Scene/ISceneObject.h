@@ -17,7 +17,7 @@ namespace UnknownEngine
 			public:
 				virtual ~ISceneObject(){}
 				
-				virtual const RawString& getName() const = 0;
+				virtual const RawString getName() const = 0;
 
 				virtual IComponent* getComponent(const RawString &name) const = 0;
 

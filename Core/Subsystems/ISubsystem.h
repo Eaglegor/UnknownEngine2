@@ -2,6 +2,7 @@
 
 #include <Core/Scene/ComponentDesc.h>
 #include <Core/State/Synchronizable.h>
+#include <Utils/Common/String.h>
 
 namespace UnknownEngine
 {
@@ -19,17 +20,20 @@ namespace UnknownEngine
 
 		namespace Subsystems
 		{
-			class ISubsystem : public State::Synchronizable
+			using Utils::Common::RawString;
+			using Tasks::ITask;
+			using Scene::IComponent;
+			using Scene::ComponentDesc;
+			using State::Synchronizable;
+
+			class ISubsystem : public Synchronizable
 			{
 				public:
 					virtual ~ISubsystem(){}
-					virtual const char* getName() = 0;
-					virtual Tasks::ITask* getPrimaryTask() = 0;
+					virtual RawString getName() const = 0;
 
-					virtual Scene::IComponent* createComponent(Scene::ComponentDesc& desc) = 0;
-					virtual void destroyComponent(Scene::IComponent* component) = 0;
-
-
+					virtual IComponent* createComponent(ComponentDesc& desc) = 0;
+					virtual void destroyComponent(IComponent* component) = 0;
 			};
 		}
 	}

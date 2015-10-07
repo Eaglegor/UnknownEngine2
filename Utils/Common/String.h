@@ -7,7 +7,7 @@ namespace UnknownEngine
 		namespace Common
 		{
 			using String = std::string;
-			using char* = RawString;
+			using RawString = const char*;
 		}
 	}
 }

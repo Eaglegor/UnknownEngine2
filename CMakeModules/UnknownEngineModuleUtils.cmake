@@ -122,7 +122,7 @@ macro(set_folder_name name)
 endmacro()
 
 macro(set_project_label label)
-	set_property(TARGET ${TARGET_NAME} PROPERTY PROJECT_LABEL Common)
+	set_property(TARGET ${TARGET_NAME} PROPERTY PROJECT_LABEL ${label})
 endmacro()
 
 macro(add_third_party_dependency library_name)

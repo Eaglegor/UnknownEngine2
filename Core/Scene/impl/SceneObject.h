@@ -16,7 +16,9 @@ namespace UnknownEngine
 			class SceneObject : public ISceneObject
 			{
 				public:
-					virtual const RawString& getName() const final override;
+					SceneObject(const RawString &name);
+
+					virtual const RawString getName() const final override;
 
 					virtual IComponent* getComponent(const RawString &name) const final override;
 

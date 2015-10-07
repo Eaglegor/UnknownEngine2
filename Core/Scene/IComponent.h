@@ -3,6 +3,8 @@
 #include <Core/State/Synchronizable.h>
 #include "ComponentType.h"
 
+#include <Utils/Common/String.h>
+
 namespace UnknownEngine
 {
 	namespace Core
@@ -16,14 +18,17 @@ namespace UnknownEngine
 		{
 			class ISceneObject;
 
+			using Subsystems::ISubsystem;
+			using Utils::Common::RawString;
+
 			class IComponent : public State::Synchronizable
 			{
 			public:
 				virtual ~IComponent(){}
 
-				virtual const char* getName() = 0;
+				virtual RawString getName() = 0;
 				virtual Subsystems::ISubsystem* getParentSubsystem() = 0;
-				virtual ComponentType getType() = 0;
+				virtual IComponentType* getType() = 0;
 
 				virtual ISceneObject* getParentSceneObject() = 0;
 			};

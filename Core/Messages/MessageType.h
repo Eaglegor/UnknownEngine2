@@ -1,6 +1,6 @@
 #pragma once
 
-#include <MessageSystem/IMessageType.h>
+#include "IMessageType.h"
 
 namespace UnknownEngine
 {
@@ -9,11 +9,11 @@ namespace UnknownEngine
 		namespace Messages
 		{
 			template<typename T>
-			class MessageType : public IMessageTypeMetaInfo
+			class MessageType : public IMessageType
 			{
 				public:
 					// Only template specializations are allowed
-					MessageTypeMetaInfo() = delete;
+					MessageType() = delete;
 			};
 		}
 	}

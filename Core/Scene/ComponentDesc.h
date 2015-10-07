@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentType.h"
+#include <Utils/Common/String.h>
 
 namespace UnknownEngine
 {
@@ -8,9 +9,11 @@ namespace UnknownEngine
 	{
 		namespace Scene
 		{
+			using Utils::Common::String;
+
 			struct ComponentDesc
 			{
-				std::string name;
+				String name;
 				ComponentType type;
 			};
 		}

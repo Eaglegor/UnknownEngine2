@@ -3,6 +3,9 @@ include(UnknownEngineModuleUtils)
 set_module_name(SamplePlugin)
 set_module_type(PLUGIN)
 
+add_private_include(SampleComponent.h)
+add_private_include(SampleSubsystem.h)
+
 add_source_file(SamplePlugin.cpp)
 
 generate_target()

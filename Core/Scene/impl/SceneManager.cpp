@@ -1,7 +1,8 @@
 #include "../SceneManager.h"
-#include "ISceneObject.h"
+#include "../ISceneObject.h"
 #include "SceneObject.h"
 #include <Utils/DataStructures/UnsafeVector.h>
+#include <Core/Memory/MemoryManager.h>
 
 namespace UnknownEngine
 {
@@ -10,17 +11,18 @@ namespace UnknownEngine
 		namespace Scene
 		{
 			using Utils::DataStructures::UnsafeVector;
+			using Core::Memory::MemoryManager;
 			
 			ISceneObject* SceneManager::createSceneObject(const RawString &name)
 			{
-				ISceneObject* scene_object = new SceneObject(name);
+				ISceneObject* scene_object = MemoryManager::getSingleton()->newSceneObject<SceneObject>(name);
 				scene_objects.emplace(name, scene_object);
 				return scene_object;
 			}
 
 			ISceneObject* SceneManager::getSceneObject(const RawString &name)
 			{
-				auto iter = scene_objects->find(name);
+				auto iter = scene_objects.find(name);
 				if(iter == scene_objects.end()) return nullptr;
 				
 				return iter->second;
@@ -28,10 +30,10 @@ namespace UnknownEngine
 
 			void SceneManager::destroySceneObject(const RawString &name)
 			{
-				auto iter = scene_objects->find(name);
+				auto iter = scene_objects.find(name);
 				ISceneObject* obj = iter->second;
 				scene_objects.erase(iter);
-				delete obj;
+				MemoryManager::getSingleton()->deleteSceneObject(obj);
 			}
 
 			void SceneManager::destroySceneObject(ISceneObject* sceneObject)
@@ -45,7 +47,7 @@ namespace UnknownEngine
 				scene_objects.clear();
 				for(ISceneObject* scene_object : scene_object_refs)
 				{
-					delete scene_object;
+					MemoryManager::getSingleton()->deleteSceneObject(scene_object);
 				}
 			}
 		}

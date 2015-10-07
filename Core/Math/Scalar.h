@@ -1,12 +1,12 @@
-#include "ReflectionManager.h"
+#pragma once
 
 namespace UnknownEngine
 {
 	namespace Core
 	{
-		namespace Reflection
+		namespace Math
 		{
-			
+			using Scalar = float;
 		}
 	}
 }
