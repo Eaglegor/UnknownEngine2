@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Utils/Common/Singleton.h>
+#include <Memory_export.h>
 
 namespace UnknownEngine
 {
@@ -29,7 +30,7 @@ namespace UnknownEngine
 			using Scene::IComponent;
 			using Scene::ISceneObject;
 
-			class MemoryManager : public Utils::Common::Singleton<MemoryManager>
+			class MEMORY_EXPORT MemoryManager : public Utils::Common::Singleton<MemoryManager>
 			{
 			public:
 				virtual ~MemoryManager(){}

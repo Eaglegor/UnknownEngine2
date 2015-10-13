@@ -10,7 +10,7 @@ namespace UnknownEngine
 		{
 			using Reflection::IMetaType;
 
-			class IComponentType : public IMetaType
+			class ComponentType
 			{
 			};
 		}

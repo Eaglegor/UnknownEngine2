@@ -3,12 +3,20 @@
 
 namespace UnknownEngine
 {
+	namespace Utils
+	{
+		namespace Common
+		{
+			template<>
+			Core::Memory::MemoryManager* Singleton<Core::Memory::MemoryManager>::instance = nullptr;
+		}
+	}
+
 	namespace Core
 	{
 		namespace Memory
 		{
-			template<>
-			MemoryManager* Utils::Common::Singleton<Core::Memory::MemoryManager>::instance = nullptr;
+			
 		}
 	}
 }

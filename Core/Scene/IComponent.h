@@ -28,7 +28,6 @@ namespace UnknownEngine
 
 				virtual RawString getName() = 0;
 				virtual Subsystems::ISubsystem* getParentSubsystem() = 0;
-				virtual IComponentType* getType() = 0;
 
 				virtual ISceneObject* getParentSceneObject() = 0;
 			};

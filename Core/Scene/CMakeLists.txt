@@ -18,5 +18,6 @@ generate_target()
 setup_installation()
 set_folder_name(Core)
 
+add_module_link_library(Memory)
 
 enable_build_speedup()
