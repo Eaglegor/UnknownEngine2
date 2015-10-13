@@ -35,59 +35,59 @@ namespace UnknownEngine
 				virtual ~MemoryManager(){}
 				
 				template<typename T, typename... Arg>
-				T* newSubsystem(Arg... arg)
+				T* newSubsystem(Arg&&... arg)
 				{
 					static_assert(std::is_base_of<ISubsystem, T>::value, "MemoryManager::new{X} is called for wrong object type {X}");
-					return new T(arg);
+					return new T(std::forward<Arg>(arg)...);
 				}
 
 				template<typename T>
 				void deleteSubsystem(T* subsystem)
 				{
 					static_assert(std::is_base_of<ISubsystem, T>::value, "MemoryManager::delete{X} is called for wrong object type {X}");
-					delete T;
+					delete subsystem;
 				}
 
 				template<typename T, typename... Arg>
 				T* newSceneObject(Arg... arg)
 				{
 					static_assert(std::is_base_of<ISceneObject, T>::value, "MemoryManager::new{X} is called for wrong object type {X}");
-					return new T(arg);
+					return new T(std::forward<Arg>(arg)...);
 				}
 
 				template<typename T>
 				void deleteSceneObject(T* scene_object)
 				{
 					static_assert(std::is_base_of<ISceneObject, T>::value, "MemoryManager::delete{X} is called for wrong object type {X}");
-					delete T;
+					delete scene_object;
 				}
 
 				template<typename T, typename... Arg>
 				T* newComponent(Arg... arg)
 				{
 					static_assert(std::is_base_of<IComponent, T>::value, "MemoryManager::new{X} is called for wrong object type {X}");
-					return new T(arg);
+					return new T(std::forward<Arg>(arg)...);
 				}
 
 				template<typename T>
 				void deleteComponent(T* component)
 				{
 					static_assert(std::is_base_of<ISubsystem, T>::value, "MemoryManager::delete{X} is called for wrong object type {X}");
-					delete T;
+					delete component;
 				}
 
 				template<typename T, typename... Arg>
 				T* newMessage(Arg... arg)
 				{
 					static_assert(std::is_base_of<IMessage, T>::value, "MemoryManager::new{X} is called for wrong object type {X}");
-					return new T(arg);
+					return new T(std::forward<Arg>(arg)...);
 				}
 
 				template<typename T>
 				void deleteMessage(T* message)
 				{
 					static_assert(std::is_base_of<ISubsystem, T>::value, "MemoryManager::delete{X} is called for wrong object type {X}");
-					delete T;
+					delete message;
 				}
 
 			private:

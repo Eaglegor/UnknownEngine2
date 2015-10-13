@@ -27,7 +27,7 @@ namespace UnknownEngine
 				ISubsystem* getSubsystem(const RawString &name) const;
 				ISubsystem* findSubsystemIf(const SubsystemPredicate &predicate);
 
-				void addSubsystemFactory(const RawString &name, ISubsystemFactory* factory) const;
+				void addSubsystemFactory(const RawString &name, ISubsystemFactory* factory);
 				void removeSubsystemFactory(const RawString &name);
 				
 			private:

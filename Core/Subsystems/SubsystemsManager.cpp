@@ -41,7 +41,7 @@ namespace UnknownEngine
 				return nullptr;
 			}
 
-			void SubsystemsManager::addSubsystemFactory(const RawString & name, ISubsystemFactory * factory) const
+			void SubsystemsManager::addSubsystemFactory(const RawString & name, ISubsystemFactory * factory)
 			{
 				subsystem_factories.emplace(name, factory);
 			}

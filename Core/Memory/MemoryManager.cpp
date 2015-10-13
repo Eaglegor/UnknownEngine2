@@ -7,7 +7,8 @@ namespace UnknownEngine
 	{
 		namespace Memory
 		{
-			
+			template<>
+			MemoryManager* Utils::Common::Singleton<Core::Memory::MemoryManager>::instance = nullptr;
 		}
 	}
 }

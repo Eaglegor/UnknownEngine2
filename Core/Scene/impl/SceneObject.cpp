@@ -1,4 +1,3 @@
-#pragma once
 #include "SceneObject.h"
 #include "../IComponent.h"
 
