@@ -6,7 +6,9 @@
 namespace UnknownEngine
 {
 	template<>
+	#ifndef _MSC_VER 
 	PROFILING_EXPORT
+	#endif
 	Core::Profiling::ProfileManager* Utils::Common::Singleton<Core::Profiling::ProfileManager>::instance = nullptr;
 
 	namespace Core

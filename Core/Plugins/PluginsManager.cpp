@@ -9,7 +9,9 @@ namespace UnknownEngine
 {
 	
 	template<>
+	#ifndef _MSC_VER
 	PLUGINS_EXPORT
+	#endif
 	Core::Plugins::PluginsManager* Utils::Common::Singleton<Core::Plugins::PluginsManager>::instance = nullptr;
 	
 	namespace Core
