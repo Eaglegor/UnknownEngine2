@@ -208,25 +208,37 @@ class Field {
 
 		template<typename Cls, typename T>
 		void setValue(Cls *cls, const T &value) const {
+			if(!typeMatches(type_id_manager.getMetaType<Cls>(), type_id_manager.getMetaType<T>()))
+			{
+				std::cout << "BadType" << std::endl;
+				return;
+			}
 			setValueImpl(cls, &value);
 		}
 
 		template<typename Cls, typename T>
 		const T& getValue(Cls *cls) const
 		{
+			if(!typeMatches(type_id_manager.getMetaType<Cls>(), type_id_manager.getMetaType<T>()))
+			{
+				std::cout << "BadType" << std::endl;
+				throw std::invalid_argument("bad type");
+			}
 			void* value;
 			getValueImpl(cls, &value);
 			return *reinterpret_cast<T*>(value);
 		}
 
-		virtual IMetaType *getType() = 0;
-		//virtual IMetaType *getClassType() = 0;
+		virtual IMetaType *getType() const = 0;
 		virtual const char* getName() = 0;
 
 	protected:
 		Field(){}
 
 	private:
+
+		virtual bool typeMatches(const IMetaType &cls_type, const IMetaType &value_type) const = 0;
+
 		virtual void setValueImpl(void* cls, const void* value) const = 0;
 		virtual void getValueImpl(void* cls, void** value) const = 0;
 		virtual void* getPointer(void *cls) const = 0;
@@ -240,19 +252,13 @@ public:
 		name(name),
 		field_ptr(ptr),
 		type(type_id_manager.getMetaType<T>())
-		//cls_type(type_id_manager.getMetaType<Cls>())
 	{
 	}
 
-	IMetaType* getType() override
+	IMetaType* getType() const override
 	{
 		return &type;
 	}
-
-	/*IMetaType* getClassType() override
-	{
-		return &cls_type;
-	}*/
 
 	const char* getName() override
 	{
@@ -279,8 +285,12 @@ private:
 		return &(clsptr->*field_ptr);
 	}
 
+	virtual bool typeMatches(const IMetaType &cls_type, const IMetaType &value_type) const
+	{
+		return type_id_manager.getMetaType<Cls>() == cls_type && type_id_manager.getMetaType<T>() == value_type;
+	}
+
 	MetaType<T> &type;
-	//MetaType<Cls> &cls_type;
 	T Cls::*field_ptr;
 	std::string name;
 };
@@ -483,7 +493,7 @@ int main() {
 
 	start = std::chrono::system_clock::now();
 
-	for (int i = 0; i < 100000000; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		pa->intProperty = i;
 	}
@@ -501,9 +511,10 @@ int main() {
 
 	start = std::chrono::system_clock::now();
 
-	for (int i = 0; i < 100000000; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		bound_field.setValue(i);
+		f->setValue(&a, i);
+		//bound_field.setValue(i);
 	}
 
 	end = std::chrono::system_clock::now();
