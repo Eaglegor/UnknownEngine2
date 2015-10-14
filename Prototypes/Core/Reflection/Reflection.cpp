@@ -1,6 +1,8 @@
 #include <unordered_map>
 #include <iostream>
 #include <chrono>
+#include <array>
+#include <tuple>
 
 class Methods {
 };
@@ -22,6 +24,76 @@ public:
 
 private:
 	std::unordered_map<std::string, Field*> fields;
+};
+
+class Arguments
+{
+	
+};
+
+template<typename... Args>
+class TypedArguments : public Arguments
+{
+};
+
+class ArgumentBindings
+{
+	template<typename T>
+	void bindValue(int index, const T& value)
+	{
+		
+	}
+
+	template<typename T>
+	void bindValue(const char* name, const T& value)
+	{
+		
+	}
+};
+
+template<typename T>
+class Optional{};
+
+template<typename... Args>
+class TypedArgumentBindings : public ArgumentBindings
+{
+public:
+	TypedArgumentBindings(const TypedArguments<Args...> &args)
+	{
+
+	}
+
+private:
+	std::tuple<Optional<Args>...> bound_values;
+};
+
+class Constructor
+{
+public:
+	virtual void construct(void* memory) const = 0;
+	virtual void construct(void* memory, const ArgumentBindings &arguments) const = 0;
+
+	virtual const Arguments& getArguments() const = 0;
+};
+
+template<typename Cls, typename... Args>
+class TypedConstructor : public Constructor
+{
+public:
+	TypedConstructor()
+	{
+	}
+
+	virtual void construct(void* memory) const override {
+		static_assert(sizeof...(Args) == 0, "Arguments bindings must be provided for this constructor");
+	}
+
+	virtual void construct(void* memory, const ArgumentBindings& arguments) const override {}
+
+	virtual const Arguments& getArguments() const override { return arguments; }
+
+private:
+	TypedArguments<Args...> arguments;
 };
 
 class Constructors {
@@ -485,6 +557,12 @@ int main() {
 	MetaType<float> floatMetaType2;
 	std::cout << floatMetaType2.getTypeName() << " = " << floatMetaType2.getTypeId() << std::endl;
 
+	TypedConstructor<A> tc1;
+
+	TypedConstructor<A, int, int> tc2();
+
+
+
 	A a;
 
 	std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -493,14 +571,14 @@ int main() {
 
 	start = std::chrono::system_clock::now();
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 1000000; ++i)
 	{
 		pa->intProperty = i;
 	}
 
 	end = std::chrono::system_clock::now();
 
-	std::cout << "Plain: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+	std::cout << "Plain: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000000.0f << std::endl;
 	
 	MetaType<A> &amt = type_id_manager.getMetaType<A>();
 	const Field *f = amt.getFields().getField("intProperty");
@@ -511,15 +589,15 @@ int main() {
 
 	start = std::chrono::system_clock::now();
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 1000000; ++i)
 	{
-		f->setValue(&a, i);
-		//bound_field.setValue(i);
+		//f->setValue(&a, i);
+		bound_field.setValue(i);
 	}
 
 	end = std::chrono::system_clock::now();
 
-	std::cout << "Reflection: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+	std::cout << "Reflection: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000000.0f << std::endl;
 	
 	std::cout << f->getValue<A, int>(&a) << std::endl;
 
