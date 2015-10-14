@@ -11,3 +11,4 @@ set_folder_name(Test)
 
 add_module_link_library(Plugins)
 add_module_link_library(Profiling)
+add_module_link_library(Memory)

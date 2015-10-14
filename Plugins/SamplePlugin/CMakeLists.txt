@@ -14,5 +14,6 @@ setup_installation()
 set_folder_name(Plugins)
 
 add_module_link_library(Plugins)
+add_module_link_library(Memory)
 
 enable_build_speedup()

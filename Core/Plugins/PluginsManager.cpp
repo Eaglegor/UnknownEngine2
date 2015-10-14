@@ -1,6 +1,7 @@
 #include "PluginsManager.h"
 #include "IPlugin.h"
 #include <Core/OS/DLLUtils.h>
+#include <Plugins_export.h>
 
 #include <Core/Profiling/ProfileMacros.h>
 
@@ -8,6 +9,7 @@ namespace UnknownEngine
 {
 	
 	template<>
+	PLUGINS_EXPORT
 	Core::Plugins::PluginsManager* Utils::Common::Singleton<Core::Plugins::PluginsManager>::instance = nullptr;
 	
 	namespace Core

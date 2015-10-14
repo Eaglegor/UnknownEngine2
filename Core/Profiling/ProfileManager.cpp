@@ -1,12 +1,14 @@
 #include <memory>
 #include "ProfileManager.h"
 #include "IProfilerInstance.h"
+#include <Profiling_export.h>
 
 namespace UnknownEngine
 {
 	template<>
+	PROFILING_EXPORT
 	Core::Profiling::ProfileManager* Utils::Common::Singleton<Core::Profiling::ProfileManager>::instance = nullptr;
-	
+
 	namespace Core
 	{
 		namespace Profiling
