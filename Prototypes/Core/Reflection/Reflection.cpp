@@ -3,129 +3,22 @@
 #include <chrono>
 #include <array>
 #include <tuple>
+#include <functional>
+#include <vector>
 
-class Methods {
-};
+class Constructors;
 
-class Field;
+class Destructor;
 
-class Fields {
-	public:
-		void addField(const char *name, Field *field) {
-			fields.emplace(name, field);
-		}
+class Methods;
 
-		const Field *getField(const char *name) const {
-			auto iter = fields.find(name);
-			if (iter == fields.end()) return nullptr;
-			return iter->second;
-		}
-
-	private:
-		std::unordered_map<std::string, Field *> fields;
-};
-
-class Argument {
-};
-
-template<typename T>
-class TypedArgument
-{
-
-};
-
-class Arguments {
-	public:
-		template<typename Arg, typename... Args>
-		void initialize()
-		{
-			std::cout << "Creating arguments" << std::endl;
-			ArgumentPusher<Arg, Args...>().push();
-		}
-
-
-	private:
-		template<typename Arg, typename... Args>
-		struct ArgumentPusher
-		{
-			void push()
-			{
-				std::cout << "Pushing argument" << std::endl;
-				ArgumentPusher<Args...>().push();
-			}
-		};
-
-		template<typename Arg>
-		struct ArgumentPusher<Arg>
-		{
-			void push()
-			{
-				std::cout << "Pushing last argument" << std::endl;
-			}
-		};
-};
-
-class ArgumentBindings {
-};
-
-class Constructor {
-	public:
-		virtual void construct(void *memory) const = 0;
-
-		virtual void construct(void *memory, const ArgumentBindings &arguments) const = 0;
-
-		virtual const Arguments &getArguments() const = 0;
-};
-
-template<typename Cls>
-class DefaultConstructor : public Constructor {
-	public:
-		DefaultConstructor() {
-
-		}
-
-		virtual void construct(void *memory) const override {
-
-		}
-
-		virtual void construct(void *memory, const ArgumentBindings &arguments) const override { }
-
-		virtual const Arguments &getArguments() const override { return arguments; }
-
-	private:
-		Arguments arguments;
-};
-
-template<typename Cls, typename Arg, typename... Args>
-class ParametrizedConstructor : public Constructor {
-	public:
-		ParametrizedConstructor() {
-			std::cout << "Constructing parametrized constructor" << std::endl;
-			arguments.initialize<Arg, Args...>();
-		}
-
-		virtual void construct(void *memory) const override {
-
-		}
-
-		virtual void construct(void *memory, const ArgumentBindings &arguments) const override { }
-
-		virtual const Arguments &getArguments() const override { return arguments; }
-
-	private:
-		Arguments arguments;
-};
-
-class Constructors {
-};
-
-class Destructor {
-};
+class Fields;
 
 enum class ClassType {
 		PRIMITIVE,
 		CLASS,
-		ARRAY
+		ARRAY,
+		VOID_TYPE
 };
 
 class IMetaType {
@@ -146,37 +39,19 @@ class IMetaType {
 
 		virtual const Fields &getFields() const = 0;
 
-		virtual const IMetaType *getBaseType() const = 0;
+		virtual bool hasBaseType() const = 0;
 
-		virtual bool isDerivedFrom(IMetaType *type) const = 0;
+		virtual const IMetaType &getBaseType() const = 0;
 
-		bool operator==(const IMetaType &rhs) {
+		virtual bool isDerivedFrom(const IMetaType &type) const = 0;
+
+		bool operator==(const IMetaType &rhs) const {
 			return getTypeId() == rhs.getTypeId();
 		}
 
-		bool operator!=(const IMetaType &rhs) {
+		bool operator!=(const IMetaType &rhs) const {
 			return !(*this == rhs);
 		}
-};
-
-class A {
-	public:
-		int intProperty;
-};
-
-class B {
-	public:
-		float floatProperty;
-};
-
-class C : public B {
-	public:
-		int int2Property;
-};
-
-class D : public C {
-	public:
-		int int3Property;
 };
 
 template<typename T>
@@ -192,7 +67,7 @@ class TypeIdManager {
 		size_t getTypeId(const char *name) {
 			auto iter = mappings.find(name);
 			if (iter == mappings.end()) {
-				int val = counter++;
+				size_t val = counter++;
 				mappings.emplace(name, val);
 				return val;
 			}
@@ -212,6 +87,266 @@ class TypeIdManager {
 
 TypeIdManager type_id_manager;
 
+class Methods {
+};
+
+class Field;
+
+class IMetaType;
+
+class Fields {
+	public:
+		void addField(const char *name, Field *field) {
+			fields.emplace(name, field);
+		}
+
+		const Field *getField(const char *name) const {
+			auto iter = fields.find(name);
+			if (iter == fields.end()) return nullptr;
+			return iter->second;
+		}
+
+	private:
+		std::unordered_map<std::string, Field *> fields;
+};
+
+class Argument {
+	public:
+		Argument(const IMetaType &type) :
+				default_value_storage(nullptr),
+				type(type) { }
+
+		~Argument() {
+			if (default_value_storage) delete_closure(default_value_storage); // Deallocate storage memory ;
+		}
+
+		Argument(const Argument &rhs) :
+				default_value_storage(nullptr),
+				type(rhs.getType()) {
+			if (rhs.hasBoundValue()) {
+				rhs.copyDefaultValue(*this);
+			}
+		}
+
+		const IMetaType &getType() const { return type; }
+
+		bool hasBoundValue() const {
+			return default_value_storage != nullptr;
+		}
+
+		template<typename T>
+		T *getBoundValuePtr() const {
+			if (type_id_manager.getMetaType<T>() != type)
+			{
+				std::cout << "Incorrect value type requested" << std::endl;
+				std::cout << "Expected: " << type.getTypeName() << " but passed: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
+				return nullptr;
+			}
+			return static_cast<T *>(default_value_storage);
+		}
+
+		template<typename T>
+		void bindValue(const T &value) {
+			if(type_id_manager.getMetaType<T>() != type) {
+				std::cout << "Incorrect value type passed to be bound" << std::endl;
+				std::cout << "Expected: " << type.getTypeName() << " but passed: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
+				return;
+			}
+			default_value_storage = new T(value);
+			delete_closure = [](void *obj) { delete static_cast<T *>(obj); };
+			copy_default_value_closure = [this](Argument &arg) { arg.bindValue(*getBoundValuePtr<T>()); };
+		}
+
+		void copyDefaultValue(Argument &value) const {
+			copy_default_value_closure(value);
+		}
+
+	private:
+		std::function<void(Argument &)> copy_default_value_closure;
+		std::function<void(void *)> delete_closure;
+
+		void *default_value_storage;
+		const IMetaType &type;
+};
+
+class Arguments {
+	public:
+		template<typename Arg, typename... Args>
+		void initialize() {
+			std::cout << "Creating arguments" << std::endl;
+			ArgumentPusher<Arg, Args...>().push(arguments);
+		}
+
+		const Argument &operator[](size_t index) const {
+			return arguments[index];
+		}
+
+		const size_t size() const {
+			return arguments.size();
+		}
+
+		template<typename T>
+		void bindValue(size_t index, const T& value)
+		{
+			arguments[index].bindValue(value);
+		}
+
+	private:
+		template<typename Arg, typename... Args>
+		struct ArgumentPusher {
+			void push(std::vector<Argument> &arguments) {
+				std::cout << "Pushing argument of type " << type_id_manager.getMetaType<Arg>().getTypeName() <<
+				std::endl;
+				arguments.emplace_back(type_id_manager.getMetaType<Arg>());
+				ArgumentPusher<Args...>().push(arguments);
+			}
+		};
+
+		template<typename Arg>
+		struct ArgumentPusher<Arg> {
+			void push(std::vector<Argument> &arguments) {
+				arguments.emplace_back(type_id_manager.getMetaType<Arg>());
+				std::cout << "Pushing last argument of type " << type_id_manager.getMetaType<Arg>().getTypeName() <<
+				std::endl;
+			}
+		};
+
+		std::vector<Argument> arguments;
+};
+
+
+class Constructor {
+	public:
+		virtual void construct(void *memory) const = 0;
+
+		virtual void construct(void *memory, const Arguments &arguments) const = 0;
+
+		virtual const Arguments &getArguments() const = 0;
+
+		virtual const IMetaType &getType() const = 0;
+};
+
+template<typename Cls>
+class DefaultConstructor : public Constructor {
+	public:
+		DefaultConstructor() {
+
+		}
+
+		virtual void construct(void *memory) const override {
+			new(memory) Cls();
+		}
+
+		virtual void construct(void *memory, const Arguments &arguments) const override { }
+
+		virtual const Arguments &getArguments() const override { return arguments; }
+
+		virtual const IMetaType &getType() const override { return type_id_manager.getMetaType<Cls>(); }
+
+	private:
+		Arguments arguments;
+};
+
+template<typename Cls, typename Arg, typename... Args>
+class ParametrizedConstructor : public Constructor {
+	public:
+		ParametrizedConstructor() {
+			std::cout << "Constructing parametrized constructor" << std::endl;
+			arguments.initialize<Arg, Args...>();
+		}
+
+		virtual void construct(void *memory) const override {
+			construct(memory, arguments);
+		}
+
+		virtual void construct(void *memory, const Arguments &args) const override {
+			if (!argumentBindingsAreCorrect(args)) {
+				std::cout << "Incorrect bindings passed" << std::endl;
+				return;
+			}
+			int argument_counter = arguments.size() - 1;
+			constructImpl(memory, extractBinding<Arg>(args, argument_counter),
+						  extractBinding<Args>(args, argument_counter)...);
+		}
+
+		virtual const Arguments &getArguments() const override { return arguments; }
+
+		virtual const IMetaType &getType() const override { return type_id_manager.getMetaType<Cls>(); }
+
+	private:
+		template<typename T>
+		const T &extractBinding(const Arguments &binding, int &argument_counter) const {
+			int counter = argument_counter;
+			std::cout << "Extracting bound argument: " << argument_counter << std::endl;
+			std::cout << "Type: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
+			std::cout << "PTR: " << binding[counter].getBoundValuePtr<T>() << std::endl;
+			std::cout << "Value: " << *binding[counter].getBoundValuePtr<T>() << std::endl;
+			--argument_counter;
+			return *binding[counter].getBoundValuePtr<T>();
+		}
+
+		template<typename... InternalArgs>
+		void constructImpl(void *memory, InternalArgs &&...args) const {
+			std::cout << "Calling constructor with " << sizeof...(InternalArgs) << " arguments" << std::endl;
+			new(memory) Cls(std::forward<InternalArgs>(args)...);
+		}
+
+		bool argumentBindingsAreCorrect(const Arguments &bindings) const {
+			std::cout << "Checking argument bindings" << std::endl;
+			for(int i = 0; i < bindings.size(); ++i)
+			{
+				if(!bindings[i].hasBoundValue())
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		Arguments arguments;
+};
+
+class Constructors {
+};
+
+class Destructor {
+};
+
+
+class A {
+	public:
+		int intProperty;
+
+		A() {
+			std::cout << "Default A constructor called" << std::endl;
+		}
+
+		A(int a1, int a2, float a3, const std::string &a4) {
+			std::cout << "Parametrized A constructor called" << std::endl;
+			std::cout << "Parameters are:" << std::endl;
+			std::cout << "a1: " << a1 << std::endl;
+			std::cout << "a2: " << a2 << std::endl;
+			std::cout << "a3: " << a3 << std::endl;
+			std::cout << "a4: " << a4 << std::endl;
+		}
+};
+
+class B {
+	public:
+		float floatProperty;
+};
+
+class C : public B {
+	public:
+		int int2Property;
+};
+
+class D : public C {
+	public:
+		int int3Property;
+};
+
+
 class ObjectRefHolder {
 	public:
 
@@ -221,7 +356,7 @@ class ObjectRefHolder {
 		template<typename T>
 		T *cast() {
 			MetaType<T> &type = type_id_manager.getMetaType<T>();
-			if (type != *getType()) {
+			if (type != getType()) {
 				std::cout << "Bad type" << std::endl;
 				return nullptr;
 			}
@@ -231,7 +366,7 @@ class ObjectRefHolder {
 		template<typename T>
 		void set(T *ptr) {
 			MetaType<T> &type = type_id_manager.getMetaType<T>();
-			if (type != *getType()) {
+			if (type != getType()) {
 				std::cout << "Bad type" << std::endl;
 				return;
 			}
@@ -243,7 +378,7 @@ class ObjectRefHolder {
 		}
 
 	private:
-		virtual const IMetaType *getType() const = 0;
+		virtual const IMetaType &getType() const = 0;
 
 		virtual void *getPointer() = 0;
 
@@ -276,8 +411,8 @@ class TypedObjectHolder : public ObjectRefHolder {
 			pointer = static_cast<T *>(ptr);
 		}
 
-		virtual const IMetaType *getType() const override {
-			return &type;
+		virtual const IMetaType &getType() const override {
+			return type;
 		}
 
 		MetaType<T> &type;
@@ -313,7 +448,7 @@ class Field {
 			return *reinterpret_cast<T *>(value);
 		}
 
-		virtual IMetaType *getType() const = 0;
+		virtual IMetaType &getType() const = 0;
 
 		virtual const char *getName() = 0;
 
@@ -340,8 +475,8 @@ class TypedField : public Field {
 				type(type_id_manager.getMetaType<T>()) {
 		}
 
-		IMetaType *getType() const override {
-			return &type;
+		IMetaType &getType() const override {
+			return type;
 		}
 
 		const char *getName() override {
@@ -369,9 +504,9 @@ class TypedField : public Field {
 			return type_id_manager.getMetaType<Cls>() == cls_type && type_id_manager.getMetaType<T>() == value_type;
 		}
 
-		MetaType<T> &type;
-		T Cls::*field_ptr;
 		std::string name;
+		T Cls::*field_ptr;
+		MetaType<T> &type;
 };
 
 template<typename Cls, typename T>
@@ -394,6 +529,7 @@ class TypedBoundField {
 		T &t;
 };
 
+
 template<typename T>
 class BaseMetaType : public IMetaType {
 	public:
@@ -413,7 +549,6 @@ class BaseMetaType : public IMetaType {
 			return type_name.c_str();
 		}
 
-
 		virtual const Constructors &getConstructors() const {
 			return constructors;
 		}
@@ -430,20 +565,24 @@ class BaseMetaType : public IMetaType {
 			return fields;
 		}
 
-		virtual const IMetaType *getBaseType() const override {
-			return nullptr;
+		virtual bool hasBaseType() const override {
+			return getBaseType() != type_id_manager.getMetaType<void>();
 		}
 
-		virtual bool isDerivedFrom(IMetaType *type) const override {
+		virtual const IMetaType &getBaseType() const override {
+			return type_id_manager.getMetaType<void>();
+		}
+
+		virtual bool isDerivedFrom(const IMetaType &type) const override {
 			return false;
 		}
 
 	protected:
-		BaseMetaType(const char *name, ClassType type) {
+		BaseMetaType(const char *name, ClassType type, size_t size = sizeof(T)) {
 			static size_t tid = type_id_manager.getTypeId(name);
 			this->type_id = tid;
 			this->type_name = name;
-			this->size = sizeof(T);
+			this->size = size;
 			this->type = type;
 		}
 
@@ -462,17 +601,19 @@ class BaseMetaType : public IMetaType {
 		Destructor destructor;
 };
 
+
 template<typename T, typename BaseClass>
 class BaseDerivedMetaType : public BaseMetaType<T> {
 		static_assert(std::is_base_of<BaseClass, T>::value, "T must derive from BaseClass");
 
 	public:
-		virtual const IMetaType *getBaseType() const override {
-			return &base_class_meta_type;
+		virtual const IMetaType &getBaseType() const override {
+			return base_class_meta_type;
 		}
 
-		virtual bool isDerivedFrom(IMetaType *base_type) const override {
-			return getBaseType()->getTypeId() == base_type->getTypeId();
+		virtual bool isDerivedFrom(const IMetaType &base_type) const override {
+			if (getBaseType() == type_id_manager.getMetaType<void>()) return false;
+			return getBaseType() == base_type || getBaseType().isDerivedFrom(base_type);
 		}
 
 	protected:
@@ -485,6 +626,18 @@ class BaseDerivedMetaType : public BaseMetaType<T> {
 	private:
 		MetaType<BaseClass> &base_class_meta_type;
 };
+
+template<>
+class MetaType<void> : public BaseMetaType<void> {
+	public:
+		MetaType() :
+				BaseMetaType("void", ClassType::VOID_TYPE, 0) {
+		}
+};
+
+bool is_void_type(const IMetaType &type) {
+	return type == type_id_manager.getMetaType<void>();
+}
 
 template<>
 class MetaType<int> : public BaseMetaType<int> {
@@ -544,8 +697,16 @@ class MetaType<D> : public BaseDerivedMetaType<D, C> {
 		}
 };
 
+template<>
+class MetaType<std::string> : public BaseMetaType<std::string> {
+	public:
+		MetaType() :
+				BaseMetaType("std::string", ClassType::CLASS) {
+		}
+};
+
 int main() {
-	/*MetaType<int> intMetaType;
+	MetaType<int> intMetaType;
 	std::cout << intMetaType.getTypeName() << " = " << intMetaType.getTypeId() << std::endl;
 
 	MetaType<float> floatMetaType;
@@ -553,11 +714,33 @@ int main() {
 
 	MetaType<float> floatMetaType2;
 	std::cout << floatMetaType2.getTypeName() << " = " << floatMetaType2.getTypeId() << std::endl;
-*/
+
 	DefaultConstructor<A> tc1;
 
 	ParametrizedConstructor<A, int, int, float, std::string> tc2;
-/*
+
+	Arguments args(tc2.getArguments());
+	args.bindValue(0, 1);
+	args.bindValue(1, 2);
+	args.bindValue(2, 3.5f);
+	args.bindValue(3, std::string("456"));
+
+	void* mem1 = malloc(sizeof(A));
+	void* mem2 = malloc(sizeof(A));
+
+	tc1.construct(mem1);
+	tc2.construct(mem2, args);
+
+
+
+
+	std::cout << "Constructor definition:" << std::endl;
+	std::cout << tc2.getType().getTypeName() << "(";
+	for (int i = 0; i < tc2.getArguments().size(); ++i) {
+		std::cout << tc2.getArguments()[i].getType().getTypeName();
+		if (i < tc2.getArguments().size() - 1) std::cout << ", ";
+	}
+	std::cout << ")" << std::endl;
 
 	A a;
 
@@ -609,7 +792,7 @@ int main() {
 
 	MetaType<C> bmt2;
 	std::cout << bmt2.getTypeName() << " = " << bmt2.getTypeId() << " derived from " << bmt2.
-			getBaseType()->getTypeName() << std::endl;
+			getBaseType().getTypeName() << std::endl;
 
 	std::cout << "Inheritance tree: " << std::endl;
 
@@ -617,12 +800,12 @@ int main() {
 	const IMetaType *dmtp = &dmt;
 	do {
 		std::cout << dmtp->getTypeName() << " <- ";
-		dmtp = dmtp->getBaseType();
+		dmtp = &(dmtp->getBaseType());
 	}
-	while (dmtp != nullptr);
+	while (!is_void_type(*dmtp));
 	std::cout << "END" << std::endl;
 
-	getchar();
-*/
+	//getchar();
+
 	return 0;
 }
