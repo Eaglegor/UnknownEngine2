@@ -1,55 +1,91 @@
 object_template:
 {
-  name: "Dissector",
-  components: [
+	name: "Dissector",
+	components: [
   		{
-  		name: "Graphics",
-  		type: "Graphics::CompoundRenderable",
-  		construction_params:{
-  			models:
-  			{
-  				"Tube": {mesh: "@tubemodel", material: "@tubematerial"},
-  				"Branch1": {mesh: "@branch1model", material: "@branchmaterial", transform:{position:{x: 5}}},
-  				"Branch2": {mesh: "@branch2model", material: "@branchmaterial"},
-  				"Axis": {mesh: "@axismodel", material: "@axismaterial"}
-  			}
-  		},
-  		properties:{
-  			position: {x: 0, y:0, z:30}
-  		},
-  		post_initializers:[
-  			{
-  			  method: "setLocalShapeTransform(std::string, Math::Vector3)",
-  			  arguments:{
-  					shape_name: "Branch1",
-  					transform:{
-  						rotation: {x:30}
-  					}
-  				}
-  			},
-  			{
-  				method: "setLocalShapeTransform",
-  				arguments:
-  				{
-  					shape_name: "Branch2",
-  					transform:{
-  						rotation: {x:-30}
-  					}
-  				}
-  			},
-  			{
-  				method: "setLocalShapeTransform",
-  				arguments: {
-  					shape_name: "Axis",
-  					transform:{
-  						position: {z:-20}
-  					}
-  				}
-  		]
-  	},
-  	{
-  		name: "RigidBodyShape",
-  		type: "Physics::RigidBodyDynamics::
-  	}
-  ] 
+			name: "Graphics",
+			type: "Graphics::CompoundRenderable",
+			construction_params:{
+				parts:
+				[
+					{
+						name: "Tube",
+						mesh: "@tubemodel",
+						material: "@tubematerial"
+					},
+					{
+						name: "Branch1",
+						mesh: "@branch1model",
+						material: "@branchmaterial",
+						transform: {
+							position: {
+								x: 5
+							}
+						}
+					},
+					{
+						name: "Branch2",
+						mesh: "@branch2model",
+						material: "@branchmaterial",
+						transform: {
+							position: {
+								x: -5
+							}
+						}
+					},
+					{
+						name: "Axis",
+						mesh: "@axismodel",
+						material: "@axismaterial"
+					}
+				]
+			},
+			properties:{
+				transform: {
+					position: {x: 0, y:0, z:30}
+				}
+			},
+			post_initializers:[
+				{
+				  method: "setLocalShapeTransform(std::string, Math::Vector3)",
+				  arguments:{
+						shape_name: "Branch1",
+						transform:{
+							rotation: {x:30}
+						}
+					}
+				},
+				{
+					method: "setLocalShapeTransform",
+					arguments:
+					{
+						shape_name: "Branch2",
+						transform:{
+							rotation: {x:-30}
+						}
+					}
+				},
+				{
+					method: "setLocalShapeTransform",
+					arguments: {
+						shape_name: "Axis",
+						transform:{
+							position: {z:-20}
+						}
+					}
+				}
+			]
+		},
+		{
+			name: "ScriptOptions",
+			type: "Behavior::ScriptOptions",
+			construction_params:[
+				options:
+				{
+					"instrument_type" : "Dissector",
+					"instrument_port" : "${instrument_port}"
+				}
+			]
+		}
+	] 
 }

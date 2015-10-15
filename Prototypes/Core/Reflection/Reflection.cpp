@@ -87,6 +87,10 @@ class TypeIdManager {
 
 TypeIdManager type_id_manager;
 
+#define META_TYPE(T) type_id_manager.getMetaType<T>()
+#define META_TYPE_NAME(T) type_id_manager.getMetaType<T>().getTypeName()
+#define META_TYPE_ID(T) type_id_manager.getMetaType<T>().getTypeId()
+
 class Methods {
 };
 
@@ -136,10 +140,10 @@ class Argument {
 
 		template<typename T>
 		T *getBoundValuePtr() const {
-			if (type_id_manager.getMetaType<T>() != type)
+			if (META_TYPE(T) != type)
 			{
 				std::cout << "Incorrect value type requested" << std::endl;
-				std::cout << "Expected: " << type.getTypeName() << " but passed: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
+				std::cout << "Expected: " << type.getTypeName() << " but passed: " << META_TYPE_NAME(T) << std::endl;
 				return nullptr;
 			}
 			return static_cast<T *>(default_value_storage);
@@ -147,9 +151,9 @@ class Argument {
 
 		template<typename T>
 		void bindValue(const T &value) {
-			if(type_id_manager.getMetaType<T>() != type) {
+			if( META_TYPE(T) != type) {
 				std::cout << "Incorrect value type passed to be bound" << std::endl;
-				std::cout << "Expected: " << type.getTypeName() << " but passed: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
+				std::cout << "Expected: " << type.getTypeName() << " but passed: " << META_TYPE_NAME(T) << std::endl;
 				return;
 			}
 			default_value_storage = new T(value);
@@ -195,9 +199,9 @@ class Arguments {
 		template<typename Arg, typename... Args>
 		struct ArgumentPusher {
 			void push(std::vector<Argument> &arguments) {
-				std::cout << "Pushing argument of type " << type_id_manager.getMetaType<Arg>().getTypeName() <<
+				std::cout << "Pushing argument of type " << META_TYPE_NAME(Arg) <<
 				std::endl;
-				arguments.emplace_back(type_id_manager.getMetaType<Arg>());
+				arguments.emplace_back(META_TYPE(Arg));
 				ArgumentPusher<Args...>().push(arguments);
 			}
 		};
@@ -205,8 +209,8 @@ class Arguments {
 		template<typename Arg>
 		struct ArgumentPusher<Arg> {
 			void push(std::vector<Argument> &arguments) {
-				arguments.emplace_back(type_id_manager.getMetaType<Arg>());
-				std::cout << "Pushing last argument of type " << type_id_manager.getMetaType<Arg>().getTypeName() <<
+				arguments.emplace_back( META_TYPE(Arg) );
+				std::cout << "Pushing last argument of type " << META_TYPE_NAME(Arg) <<
 				std::endl;
 			}
 		};
@@ -241,7 +245,7 @@ class DefaultConstructor : public Constructor {
 
 		virtual const Arguments &getArguments() const override { return arguments; }
 
-		virtual const IMetaType &getType() const override { return type_id_manager.getMetaType<Cls>(); }
+		virtual const IMetaType &getType() const override { return META_TYPE(Cls); }
 
 	private:
 		Arguments arguments;
@@ -270,7 +274,7 @@ class ParametrizedConstructor : public Constructor {
 
 		virtual const Arguments &getArguments() const override { return arguments; }
 
-		virtual const IMetaType &getType() const override { return type_id_manager.getMetaType<Cls>(); }
+		virtual const IMetaType &getType() const override { return META_TYPE(Cls); }
 
 	private:
 		template<size_t N>
@@ -288,10 +292,6 @@ class ParametrizedConstructor : public Constructor {
 	
 		template<size_t S, typename T = NthArgumentType<S>>
 		const T &extractBinding(const Arguments &bindings) const {
-			std::cout << "Extracting argument " << S << std::endl;
-			std::cout << "Type: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
-			std::cout << "Pointer: " <<  bindings[S].getBoundValuePtr<T>() << std::endl;
-			std::cout << "Value: " << *bindings[S].getBoundValuePtr<T>() << std::endl;
 			return *bindings[S].getBoundValuePtr<T>();
 		}
 
@@ -359,7 +359,7 @@ class ObjectRefHolder {
 
 		template<typename T>
 		T *cast() {
-			MetaType<T> &type = type_id_manager.getMetaType<T>();
+			MetaType<T> &type = META_TYPE(T);
 			if (type != getType()) {
 				std::cout << "Bad type" << std::endl;
 				return nullptr;
@@ -369,7 +369,7 @@ class ObjectRefHolder {
 
 		template<typename T>
 		void set(T *ptr) {
-			MetaType<T> &type = type_id_manager.getMetaType<T>();
+			MetaType<T> &type = META_TYPE(T);
 			if (type != getType()) {
 				std::cout << "Bad type" << std::endl;
 				return;
@@ -394,12 +394,12 @@ class TypedObjectHolder : public ObjectRefHolder {
 	public:
 		TypedObjectHolder() :
 				pointer(nullptr),
-				type(type_id_manager.getMetaType<T>()) {
+				type(META_TYPE(T)) {
 		}
 
 		TypedObjectHolder(T *ptr) :
 				pointer(ptr),
-				type(type_id_manager.getMetaType<T>()) {
+				type(META_TYPE(T)) {
 		}
 
 		~TypedObjectHolder() {
@@ -434,7 +434,7 @@ class Field {
 
 		template<typename Cls, typename T>
 		void setValue(Cls *cls, const T &value) const {
-			if (!typeMatches(type_id_manager.getMetaType<Cls>(), type_id_manager.getMetaType<T>())) {
+			if (!typeMatches(META_TYPE(Cls), META_TYPE(T))) {
 				std::cout << "BadType" << std::endl;
 				return;
 			}
@@ -443,7 +443,7 @@ class Field {
 
 		template<typename Cls, typename T>
 		const T &getValue(Cls *cls) const {
-			if (!typeMatches(type_id_manager.getMetaType<Cls>(), type_id_manager.getMetaType<T>())) {
+			if (!typeMatches(META_TYPE(Cls), META_TYPE(T))) {
 				std::cout << "BadType" << std::endl;
 				throw std::invalid_argument("bad type");
 			}
@@ -476,7 +476,7 @@ class TypedField : public Field {
 		TypedField(const char *name, T Cls::*ptr) :
 				name(name),
 				field_ptr(ptr),
-				type(type_id_manager.getMetaType<T>()) {
+				type(META_TYPE(T)) {
 		}
 
 		IMetaType &getType() const override {
@@ -505,7 +505,7 @@ class TypedField : public Field {
 		}
 
 		virtual bool typeMatches(const IMetaType &cls_type, const IMetaType &value_type) const {
-			return type_id_manager.getMetaType<Cls>() == cls_type && type_id_manager.getMetaType<T>() == value_type;
+			return META_TYPE(Cls) == cls_type && META_TYPE(T) == value_type;
 		}
 
 		std::string name;
@@ -570,11 +570,11 @@ class BaseMetaType : public IMetaType {
 		}
 
 		virtual bool hasBaseType() const override {
-			return getBaseType() != type_id_manager.getMetaType<void>();
+			return getBaseType() != META_TYPE(void);
 		}
 
 		virtual const IMetaType &getBaseType() const override {
-			return type_id_manager.getMetaType<void>();
+			return META_TYPE(void);
 		}
 
 		virtual bool isDerivedFrom(const IMetaType &type) const override {
@@ -616,14 +616,14 @@ class BaseDerivedMetaType : public BaseMetaType<T> {
 		}
 
 		virtual bool isDerivedFrom(const IMetaType &base_type) const override {
-			if (getBaseType() == type_id_manager.getMetaType<void>()) return false;
+			if (getBaseType() == META_TYPE(void)) return false;
 			return getBaseType() == base_type || getBaseType().isDerivedFrom(base_type);
 		}
 
 	protected:
 		BaseDerivedMetaType(const char *name, ClassType type) :
 				BaseMetaType<T>(name, type),
-				base_class_meta_type(type_id_manager.getMetaType<BaseClass>()) {
+				base_class_meta_type(META_TYPE(BaseClass)) {
 
 		}
 
@@ -640,7 +640,7 @@ class MetaType<void> : public BaseMetaType<void> {
 };
 
 bool is_void_type(const IMetaType &type) {
-	return type == type_id_manager.getMetaType<void>();
+	return type == META_TYPE(void);
 }
 
 template<>
@@ -723,17 +723,19 @@ int main() {
 
 	ParametrizedConstructor<A, int, int, float, std::string> tc2;
 
-	Arguments args(tc2.getArguments());
+	const Constructor& constr = tc2;
+
+	Arguments args(constr.getArguments());
 	args.bindValue(0, 1);
 	args.bindValue(1, 2);
 	args.bindValue(2, 3.5f);
 	args.bindValue(3, std::string("456"));
 
 	void* mem1 = malloc(sizeof(A));
-	void* mem2 = malloc(sizeof(A));
+	void* mem2 = malloc(constr.getType().getSize());
 
 	tc1.construct(mem1);
-	tc2.construct(mem2, args);
+	constr.construct(mem2, args);
 
 
 
@@ -763,7 +765,7 @@ int main() {
 	std::cout << "Plain: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000000.0f <<
 	std::endl;
 
-	MetaType<A> &amt = type_id_manager.getMetaType<A>();
+	MetaType<A> &amt = META_TYPE(A);
 	const Field *f = amt.getFields().getField("intProperty");
 
 	TypedBoundField<A, int> bound_field(f, &a);
