@@ -171,10 +171,10 @@ class Argument {
 
 class Arguments {
 	public:
-		template<typename Arg, typename... Args>
+		template<typename... Args>
 		void initialize() {
 			std::cout << "Creating arguments" << std::endl;
-			ArgumentPusher<Arg, Args...>().push(arguments);
+			ArgumentPusher<Args...>().push(arguments);
 		}
 
 		const Argument &operator[](size_t index) const {
@@ -247,12 +247,13 @@ class DefaultConstructor : public Constructor {
 		Arguments arguments;
 };
 
-template<typename Cls, typename Arg, typename... Args>
+template<typename Cls, typename... Args>
 class ParametrizedConstructor : public Constructor {
+	static_assert(sizeof...(Args) > 0, "This constructor must have arguments");
 	public:
 		ParametrizedConstructor() {
 			std::cout << "Constructing parametrized constructor" << std::endl;
-			arguments.initialize<Arg, Args...>();
+			arguments.initialize<Args...>();
 		}
 
 		virtual void construct(void *memory) const override {
@@ -264,9 +265,7 @@ class ParametrizedConstructor : public Constructor {
 				std::cout << "Incorrect bindings passed" << std::endl;
 				return;
 			}
-			int argument_counter = arguments.size() - 1;
-			constructImpl(memory, extractBinding<Arg>(args, argument_counter),
-						  extractBinding<Args>(args, argument_counter)...);
+			constructImpl(memory, args, typename generate_sequence<sizeof...(Args)>::type());
 		}
 
 		virtual const Arguments &getArguments() const override { return arguments; }
@@ -274,28 +273,33 @@ class ParametrizedConstructor : public Constructor {
 		virtual const IMetaType &getType() const override { return type_id_manager.getMetaType<Cls>(); }
 
 	private:
-		template<typename T>
-		const T &extractBinding(const Arguments &binding, int &argument_counter) const {
-			int counter = argument_counter;
-			std::cout << "Extracting bound argument: " << argument_counter << std::endl;
-			std::cout << "Type: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
-			std::cout << "PTR: " << binding[counter].getBoundValuePtr<T>() << std::endl;
-			std::cout << "Value: " << *binding[counter].getBoundValuePtr<T>() << std::endl;
-			--argument_counter;
-			return *binding[counter].getBoundValuePtr<T>();
+		template<size_t N>
+		using NthArgumentType = typename std::tuple_element<N, std::tuple<Args...>>::type;
+		
+		template<size_t ...> struct sequence {};
+		template<size_t N, size_t ...S> struct generate_sequence : generate_sequence<N-1, N-1, S...> {};
+		template<size_t ...S> struct generate_sequence<0, S...> {typedef sequence<S...> type;};
+		
+		template<size_t ...S>
+		void constructImpl(void* memory, const Arguments &bindings, sequence<S...>) const
+		{
+			new(memory) Cls( extractBinding<S>(bindings) ...);
 		}
-
-		template<typename... InternalArgs>
-		void constructImpl(void *memory, InternalArgs &&...args) const {
-			std::cout << "Calling constructor with " << sizeof...(InternalArgs) << " arguments" << std::endl;
-			new(memory) Cls(std::forward<InternalArgs>(args)...);
+	
+		template<size_t S, typename T = NthArgumentType<S>>
+		const T &extractBinding(const Arguments &bindings) const {
+			std::cout << "Extracting argument " << S << std::endl;
+			std::cout << "Type: " << type_id_manager.getMetaType<T>().getTypeName() << std::endl;
+			std::cout << "Pointer: " <<  bindings[S].getBoundValuePtr<T>() << std::endl;
+			std::cout << "Value: " << *bindings[S].getBoundValuePtr<T>() << std::endl;
+			return *bindings[S].getBoundValuePtr<T>();
 		}
 
 		bool argumentBindingsAreCorrect(const Arguments &bindings) const {
 			std::cout << "Checking argument bindings" << std::endl;
 			for(int i = 0; i < bindings.size(); ++i)
 			{
-				if(!bindings[i].hasBoundValue())
+				if(!bindings[i].hasBoundValue() || bindings[i].getType() != arguments[i].getType())
 				{
 					return false;
 				}
