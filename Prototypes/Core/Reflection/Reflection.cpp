@@ -254,6 +254,7 @@ class DefaultConstructor : public Constructor {
 template<typename Cls, typename... Args>
 class ParametrizedConstructor : public Constructor {
 	static_assert(sizeof...(Args) > 0, "This constructor must have arguments");
+	static_assert(std::is_constructible<Cls, Args...>::value, "Class has no constructor with provided argument types");
 	public:
 		ParametrizedConstructor() {
 			std::cout << "Constructing parametrized constructor" << std::endl;
@@ -311,43 +312,17 @@ class ParametrizedConstructor : public Constructor {
 };
 
 class Constructors {
+	public:
+		void addConstructor(Constructor* constructor)
+		{
+			constructors.emplace_back(constructor);
+		}
+	
+	private:
+		std::vector<Constructor*> constructors;
 };
 
 class Destructor {
-};
-
-
-class A {
-	public:
-		int intProperty;
-
-		A() {
-			std::cout << "Default A constructor called" << std::endl;
-		}
-
-		A(int a1, int a2, float a3, const std::string &a4) {
-			std::cout << "Parametrized A constructor called" << std::endl;
-			std::cout << "Parameters are:" << std::endl;
-			std::cout << "a1: " << a1 << std::endl;
-			std::cout << "a2: " << a2 << std::endl;
-			std::cout << "a3: " << a3 << std::endl;
-			std::cout << "a4: " << a4 << std::endl;
-		}
-};
-
-class B {
-	public:
-		float floatProperty;
-};
-
-class C : public B {
-	public:
-		int int2Property;
-};
-
-class D : public C {
-	public:
-		int int3Property;
 };
 
 
@@ -593,6 +568,11 @@ class BaseMetaType : public IMetaType {
 		void addField(const char *name, Field *field) {
 			fields.addField(name, field);
 		}
+		
+		void addConstructor(Constructor* constructor)
+		{
+			constructors.addConstructor(constructor);
+		}
 
 	private:
 		size_t type_id;
@@ -631,6 +611,8 @@ class BaseDerivedMetaType : public BaseMetaType<T> {
 		MetaType<BaseClass> &base_class_meta_type;
 };
 
+
+
 template<>
 class MetaType<void> : public BaseMetaType<void> {
 	public:
@@ -660,17 +642,58 @@ class MetaType<float> : public BaseMetaType<float> {
 };
 
 template<>
+class MetaType<std::string> : public BaseMetaType<std::string> {
+	public:
+		MetaType() :
+				BaseMetaType("std::string", ClassType::CLASS) {
+		}
+};
+
+
+class A {
+	public:
+		int intProperty;
+
+		A() {
+			std::cout << "Default A constructor called" << std::endl;
+		}
+
+		A(int a1, int a2, float a3, const std::string &a4) {
+			std::cout << "Parametrized A constructor called" << std::endl;
+			std::cout << "Parameters are:" << std::endl;
+			std::cout << "a1: " << a1 << std::endl;
+			std::cout << "a2: " << a2 << std::endl;
+			std::cout << "a3: " << a3 << std::endl;
+			std::cout << "a4: " << a4 << std::endl;
+		}
+};
+
+template<>
 class MetaType<A> : public BaseMetaType<A> {
 	public:
 		MetaType() :
 				BaseMetaType("A", ClassType::CLASS),
 				intProperty("intProperty", &A::intProperty) {
+			
+			addConstructor(&defaultConstructor);
+			addConstructor(&constructor1);
+					
 			addField("intProperty", &intProperty);
 		}
 
 	private:
 		TypedField<A, int> intProperty;
+		
+		DefaultConstructor<A> defaultConstructor;
+		ParametrizedConstructor<A, int, int, float, std::string> constructor1;
 };
+
+
+class B {
+	public:
+		float floatProperty;
+};
+
 
 template<>
 class MetaType<B> : public BaseMetaType<B> {
@@ -685,12 +708,22 @@ class MetaType<B> : public BaseMetaType<B> {
 		TypedField<B, float> floatProperty;
 };
 
+class C : public B {
+	public:
+		int int2Property;
+};
+
 template<>
 class MetaType<C> : public BaseDerivedMetaType<C, B> {
 	public:
 		MetaType() :
 				BaseDerivedMetaType("C", ClassType::CLASS) {
 		}
+};
+
+class D : public C {
+	public:
+		int int3Property;
 };
 
 template<>
@@ -701,13 +734,6 @@ class MetaType<D> : public BaseDerivedMetaType<D, C> {
 		}
 };
 
-template<>
-class MetaType<std::string> : public BaseMetaType<std::string> {
-	public:
-		MetaType() :
-				BaseMetaType("std::string", ClassType::CLASS) {
-		}
-};
 
 int main() {
 	MetaType<int> intMetaType;
