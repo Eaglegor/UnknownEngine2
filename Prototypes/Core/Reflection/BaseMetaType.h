@@ -7,8 +7,7 @@
 #include "Methods.h"
 #include "Fields.h"
 #include "TypedField.h"
-#include "DefaultConstructor.h"
-#include "ParametrizedConstructor.h"
+#include "ConstructorImpl.h"
 
 template<typename T, typename BaseClass = void>
 class BaseMetaType : public IMetaType {

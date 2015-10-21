@@ -9,8 +9,7 @@
 #include "TypeIdManager.h"
 
 #include "Arguments.h"
-#include "DefaultConstructor.h"
-#include "ParametrizedConstructor.h"
+#include "ConstructorImpl.h"
 
 #include "A.h"
 #include "B.h"
@@ -33,9 +32,9 @@ int main() {
 	MetaType<float> floatMetaType2;
 	std::cout << floatMetaType2.getTypeName() << " = " << floatMetaType2.getTypeId() << std::endl;
 
-	DefaultConstructor<A> tc1;
+	ConstructorImpl<A> tc1;
 
-	ParametrizedConstructor<A, int, int, float, std::string> tc2;
+	ConstructorImpl<A, int, int, float, std::string> tc2;
 
 	const Constructor& constr = tc2;
 

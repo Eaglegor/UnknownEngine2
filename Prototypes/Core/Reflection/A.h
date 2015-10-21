@@ -36,6 +36,6 @@ class MetaType<A> : public BaseMetaType<A> {
 	private:
 		TypedField<A, int> intProperty;
 
-		DefaultConstructor<A> defaultConstructor;
-		ParametrizedConstructor<A, int, int, float, std::string> constructor1;
+		ConstructorImpl<A> defaultConstructor;
+		ConstructorImpl<A, int, int, float, std::string> constructor1;
 };

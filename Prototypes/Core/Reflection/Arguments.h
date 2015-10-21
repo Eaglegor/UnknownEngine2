@@ -25,8 +25,15 @@ class Arguments {
 		}
 
 	private:
+		template<typename... Args>
+		struct ArgumentPusher
+		{
+			void push(std::vector<Argument> &arguments) {
+			}
+		};
+
 		template<typename Arg, typename... Args>
-		struct ArgumentPusher {
+		struct ArgumentPusher<Arg, Args...> {
 			void push(std::vector<Argument> &arguments) {
 				std::cout << "Pushing argument of type " << META_TYPE_NAME(Arg) <<
 				std::endl;
@@ -43,6 +50,7 @@ class Arguments {
 				std::endl;
 			}
 		};
+
 
 		std::vector<Argument> arguments;
 };

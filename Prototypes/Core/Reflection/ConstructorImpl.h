@@ -3,11 +3,10 @@
 #include "Constructor.h"
 
 template<typename Cls, typename... Args>
-class ParametrizedConstructor : public Constructor {
-		static_assert(sizeof...(Args) > 0, "This constructor must have arguments");
+class ConstructorImpl : public Constructor {
 		static_assert(std::is_constructible<Cls, Args...>::value, "Class has no constructor with provided argument types");
 	public:
-		ParametrizedConstructor() {
+		ConstructorImpl() {
 			std::cout << "Constructing parametrized constructor" << std::endl;
 			arguments.initialize<Args...>();
 		}
