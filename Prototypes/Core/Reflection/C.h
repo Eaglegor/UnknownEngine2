@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseDerivedMetaType.h"
+#include "BaseMetaType.h"
 
 class C : public B {
 	public:
@@ -8,9 +8,9 @@ class C : public B {
 };
 
 template<>
-class MetaType<C> : public BaseDerivedMetaType<C, B> {
+class MetaType<C> : public BaseMetaType<C, B> {
 	public:
 		MetaType() :
-				BaseDerivedMetaType("C", ClassType::CLASS) {
+				BaseMetaType("C", ClassType::CLASS) {
 		}
 };

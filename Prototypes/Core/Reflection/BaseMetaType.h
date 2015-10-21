@@ -10,8 +10,11 @@
 #include "DefaultConstructor.h"
 #include "ParametrizedConstructor.h"
 
-template<typename T>
+template<typename T, typename BaseClass = void>
 class BaseMetaType : public IMetaType {
+
+	static_assert(std::is_same<void, BaseClass>::value ||  std::is_base_of<BaseClass, T>::value, "T must derive from BaseClass");
+
 	public:
 		virtual ClassType getClassType() const override {
 			return type;
@@ -50,15 +53,19 @@ class BaseMetaType : public IMetaType {
 		}
 
 		virtual const IMetaType &getBaseType() const override {
-			return META_TYPE(void);
+			return base_class_meta_type;
 		}
 
-		virtual bool isDerivedFrom(const IMetaType &type) const override {
-			return false;
+		virtual bool isDerivedFrom(const IMetaType &base_type) const override {
+			if (getBaseType() == META_TYPE(void)) return false;
+			return getBaseType() == base_type || getBaseType().isDerivedFrom(base_type);
 		}
 
 	protected:
-		BaseMetaType(const char *name, ClassType type, size_t size = sizeof(T)) {
+
+		BaseMetaType(const char *name, ClassType type, size_t size = sizeof(T)):
+			base_class_meta_type(META_TYPE(BaseClass))
+		{
 			static size_t tid = TypeIdManager::instance->getTypeId(name);
 			this->type_id = tid;
 			this->type_name = name;
@@ -84,4 +91,6 @@ class BaseMetaType : public IMetaType {
 		Fields fields;
 		Constructors constructors;
 		Destructor destructor;
+
+		MetaType<BaseClass> &base_class_meta_type;
 };
