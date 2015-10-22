@@ -20,6 +20,11 @@ class Argument {
 			}
 		}
 
+		bool isConst() const
+		{
+
+		}
+
 		const IMetaType &getType() const { return type; }
 
 		bool hasBoundValue() const {
@@ -47,7 +52,10 @@ class Argument {
 			default_value_storage = new T(value);
 			delete_closure = [](void *obj) { delete static_cast<T *>(obj); };
 			copy_default_value_closure = [this](Argument &arg) { arg.bindValue(*getBoundValuePtr<T>()); };
+			owns_value = true;
 		}
+
+
 
 		void copyDefaultValue(Argument &value) const {
 			copy_default_value_closure(value);
@@ -57,6 +65,8 @@ class Argument {
 		std::function<void(Argument &)> copy_default_value_closure;
 		std::function<void(void *)> delete_closure;
 
+		bool is_const;
+		bool owns_value;
 		void *default_value_storage;
 		const IMetaType &type;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Constructor.h"
+#include "SequenceUtils.h"
 
 template<typename Cls, typename... Args>
 class ConstructorImpl : public Constructor {
@@ -30,10 +31,6 @@ class ConstructorImpl : public Constructor {
 	private:
 		template<size_t N>
 		using NthArgumentType = typename std::tuple_element<N, std::tuple<Args...>>::type;
-
-		template<size_t ...> struct sequence {};
-		template<size_t N, size_t ...S> struct generate_sequence : generate_sequence<N-1, N-1, S...> {};
-		template<size_t ...S> struct generate_sequence<0, S...> {typedef sequence<S...> type;};
 
 		template<size_t ...S>
 		void constructImpl(void* memory, const Arguments &bindings, sequence<S...>) const
