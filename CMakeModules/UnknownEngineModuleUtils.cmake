@@ -126,18 +126,12 @@ macro(set_project_label label)
 endmacro()
 
 macro(add_third_party_dependency library_name)
-	if((${ARGV1}) AND (NOT ${ARGV1} MATCHES MODULES))
-		set(version ${ARGV1})
-	else()
-		include(${UNKNOWN_ENGINE_SOURCE_DIR}/ThirdParty/${library_name}/versions.cmake)
-		get_latest_module_version(version)
-	endif()
-	
-	if(NOT EXISTS ${UNKNOWN_ENGINE_SOURCE_DIR}/ThirdParty/${library_name}/${version} OR NOT IS_DIRECTORY ${UNKNOWN_ENGINE_SOURCE_DIR}/ThirdParty/${library_name}/${version})
+	if(NOT EXISTS ${UNKNOWN_ENGINE_SOURCE_DIR}/ThirdParty/packaged/${library_name} OR NOT IS_DIRECTORY ${UNKNOWN_ENGINE_SOURCE_DIR}/ThirdParty/packaged/${library_name})
 		message(FATAL_ERROR "Can't find third party module: ${library_name}-${version}")
 	endif()
-	include(${UNKNOWN_ENGINE_SOURCE_DIR}/ThirdParty/${library_name}/${version}/add.cmake)
-	add_third_party_module(${TARGET_NAME} ${ARGN})
+	
+	include(${UNKNOWN_ENGINE_SOURCE_DIR}/ThirdParty/packaged/${library_name}/Install.cmake)
+	add_third_party_library(${TARGET_NAME} ${ARGN})
 endmacro()
 
 if(MSVC)
